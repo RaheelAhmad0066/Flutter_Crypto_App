@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "40206981784",
+    "project_id": "cryptotracker-faa5d",
+    "storage_bucket": "cryptotracker-faa5d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40206981784:android:c49fe95204b1bd787a8eed",
+        "android_client_info": {
+          "package_name": "com.cryptotrack.signals"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "40206981784-k6epnm23k2r0i7oi66qi7ddlsbd6mvr1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cryptotrack.signals",
+            "certificate_hash": "81acbab5d53c6da52fa0f02ac6e7c847ab8a86c6"
+          }
+        },
+        {
+          "client_id": "40206981784-c0m9s3kbeinff37qeajngr29900t2f7o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlAb-ocHPWAk-bhpTNLjwWlho3n2b47bQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "40206981784-c0m9s3kbeinff37qeajngr29900t2f7o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "40206981784-66avkci4baohaf26u0vp9bkjp80k59k9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cryptotrack.signals"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
