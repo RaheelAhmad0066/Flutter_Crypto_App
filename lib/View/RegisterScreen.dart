@@ -5,8 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Controler/UserLoginControler.dart';
 import 'navBar.dart';
+
+const color = Color(0xffF004BFE);
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -29,25 +32,41 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
-  Future<void> _handleSignIn() async {
+  Future<void> loaddata() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.getString('userName') ?? '';
+    prefs.getString('userEmail') ?? '';
+    prefs.getString('userImage') ?? '';
+  }
+
+  Future<void> handleSignInAndNavigateToHome() async {
     try {
-      final GoogleSignInAccount? googleSignInAccount =
-          await googleSignIn.signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount!.authentication;
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
 
-      //UserCredential userCredential = await _auth.signInWithCredential(credential);
+        UserCredential? userCredential =
+            await _auth.signInWithCredential(credential);
 
-      // Navigate to the home screen
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: ((context) => NavBar())),
-          (route) => false);
+        if (userCredential != null) {
+          // Store user information in SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setString('userName', userCredential.user?.displayName ?? '');
+          prefs.setString('userEmail', userCredential.user?.email ?? '');
+          prefs.setString('userImage', userCredential.user?.photoURL ?? '');
+
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: ((context) => NavBar())),
+              (route) => false);
+        }
+      }
     } catch (error) {
       print(error);
     }
@@ -183,12 +202,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: Stack(
           children: [
             Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/image/crypto.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
+              decoration: BoxDecoration(color: color
+                  // image: DecorationImage(
+                  //   image: AssetImage('assets/image/crypto.jpg'),
+                  //   fit: BoxFit.cover,
+                  // ),
+                  ),
               height: myHeight * 1,
             ),
             Container(
@@ -205,7 +224,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     Image.asset(
                       'assets/image/cry.png',
                       height: myHeight * 0.3,
-                      color: Colors.white,
+                      color: Colors.grey[400],
                     ),
                     Text(
                       'Crypto Track',
@@ -226,7 +245,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               child: Container(
                 height: myHeight * 0.6,
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.grey[300],
                     borderRadius: BorderRadiusDirectional.only(
                         topEnd: Radius.circular(25),
                         topStart: Radius.circular(26))),
@@ -248,8 +267,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         Text(
                           'Please sign up to continue',
                           style:
-                              Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    color: Colors.grey,
+                              Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    color: Colors.black,
                                   ),
                         ),
                         SizedBox(height: myHeight * 0.02),
@@ -268,7 +287,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     .textTheme
                                     .labelLarge!
                                     .copyWith(
-                                      color: Colors.grey,
+                                      color: Colors.black,
                                     ),
                               ),
                               TextButton(
@@ -302,14 +321,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 .textTheme
                                 .labelLarge!
                                 .copyWith(
-                                  color:
-                                      const Color.fromARGB(255, 115, 113, 113),
+                                  color: Colors.black,
                                 ),
                           ),
                         ),
                         SizedBox(height: myHeight * 0.02),
                         InkWell(
-                          onTap: _handleSignIn,
+                          onTap: handleSignInAndNavigateToHome,
                           child: Center(
                               child: Image.asset(
                             'assets/image/google.png',

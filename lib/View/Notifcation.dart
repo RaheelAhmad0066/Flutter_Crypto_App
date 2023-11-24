@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'home.dart';
+import 'navBar.dart';
 
 class AnotherPage extends StatefulWidget {
   final Function(int)? onNotificationAdded;
@@ -65,7 +67,8 @@ class _AnotherPageState extends State<AnotherPage> {
             color: Colors.black,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+                context, MaterialPageRoute(builder: ((context) => NavBar())));
           },
         ),
         actions: [

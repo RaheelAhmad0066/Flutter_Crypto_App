@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:crypto/Admobservices/admobs.dart';
-import 'package:crypto/View/anotherPage.dart';
+import 'package:crypto/View/RegisterScreen.dart';
+import 'package:crypto/View/Notifcation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -53,6 +54,10 @@ class _HomeState extends State<Home> {
     const durat = Duration(minutes: 2);
 
     Timer.periodic(durat, (Timer t) => showNotification());
+    if (coinMarket != null) {
+      filteredCoins.addAll(coinMarket!);
+    }
+    super.initState();
   }
 
   Future<void> getCoinMarket() async {
@@ -163,175 +168,171 @@ class _HomeState extends State<Home> {
     });
   }
 
+  // List<Coin> coinMarket = []; // replace 'Coin' with your actual data type
+  TextEditingController searchController = TextEditingController();
+  List<CoinModel> filteredCoins = [];
+
+  void filterCoins(String query) {
+    List<CoinModel> filteredList = [];
+    if (coinMarket != null && query.isNotEmpty) {
+      for (CoinModel coin in coinMarket!) {
+        if (coin.name!.toLowerCase().contains(query.toLowerCase()) ||
+            coin.symbol!.toLowerCase().contains(query.toLowerCase())) {
+          filteredList.add(coin);
+        }
+      }
+    } else if (coinMarket != null) {
+      filteredList.addAll(coinMarket!);
+    }
+
+    setState(() {
+      filteredCoins.clear();
+      filteredCoins.addAll(filteredList);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Container(
-        height: myHeight,
-        width: myWidth,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.blueAccent,
-                Color(0xffF004BFE),
-              ]),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              height: myHeight * 0.01,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: myWidth * 0.07),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/image/cry.png',
-                        height: myHeight * 0.09,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        'rypto Track',
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelLarge!
-                            .copyWith(color: Colors.white, fontSize: 27),
-                      )
-                    ],
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Get.to(AnotherPage());
-                    },
-                    child: Container(
-                        padding: EdgeInsets.all(myWidth * 0.02),
-                        height: myHeight * 0.05,
-                        width: myWidth * 0.1,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.white),
-                        child: badges.Badge(
-                            badgeContent: Text(
-                              '',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            child: Image.asset('assets/icons/3.1.png'))),
-                  )
-                ],
+      body: SingleChildScrollView(
+        child: Container(
+          height: myHeight,
+          width: myWidth,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xffF004BFE),
+                  Color(0xffF004BFE),
+                ]),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                height: myHeight * 0.01,
               ),
-            ),
-            SizedBox(
-              height: myHeight * 0.02,
-            ),
-            Container(
-              height: myHeight * 0.7,
-              width: myWidth,
-              decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 5,
-                        color: Colors.grey.shade300,
-                        spreadRadius: 3,
-                        offset: Offset(0, 3))
-                  ],
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50),
-                  )),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: myHeight * 0.03,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 24),
-                    child: Row(
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: myWidth * 0.07),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
                       children: [
+                        Image.asset(
+                          'assets/image/cry.png',
+                          height: myHeight * 0.09,
+                          color: Colors.grey[300],
+                        ),
                         Text(
-                          'Market',
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          width: myWidth * 0.6,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            getCoinMarket();
-                          },
-                          child: CircleAvatar(
-                            backgroundColor: Colors.grey.withOpacity(0.3),
-                            child: Icon(
-                              Icons.refresh,
-                              color: Colors.black,
+                          'rypto Track',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelLarge!
+                              .copyWith(color: Colors.white, fontSize: 27),
+                        )
+                      ],
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.to(AnotherPage());
+                      },
+                      child: Container(
+                          padding: EdgeInsets.all(myWidth * 0.02),
+                          height: myHeight * 0.05,
+                          width: myWidth * 0.1,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.white),
+                          child: badges.Badge(
+                              badgeContent: Text(
+                                '',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              child: Image.asset('assets/icons/3.1.png'))),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                height: myHeight * 0.06,
+                width: myWidth * 0.8,
+                child: TextField(
+                  controller: searchController,
+                  onChanged: (value) {
+                    filterCoins(value);
+                  },
+                  decoration: InputDecoration(
+                    fillColor: Colors.grey[300],
+                    filled: true,
+                    hintText: 'Search',
+                    prefixIcon: Icon(Icons.search),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.all(Radius.circular(26.0)),
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.all(Radius.circular(26.0)),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: myHeight * 0.02,
+              ),
+              Container(
+                height: myHeight * 0.7,
+                width: myWidth,
+                decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 5,
+                          color: Colors.grey.shade300,
+                          spreadRadius: 3,
+                          offset: Offset(0, 3))
+                    ],
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(50),
+                      topRight: Radius.circular(50),
+                    )),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: myHeight * 0.03,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 24),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Market',
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            width: myWidth * 0.6,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              getCoinMarket();
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: Colors.grey.withOpacity(0.3),
+                              child: Icon(
+                                Icons.refresh,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.36,
-                    child: isRefreshing == true
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: Color(0xffF004BFE),
-                            ),
-                          )
-                        : coinMarket == null || coinMarket!.length == 0
-                            ? Padding(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.height * 0.06),
-                                child: Center(
-                                  child: Text(
-                                    'Attention this Api is free, so you cannot send multiple requests per second, please wait and try again later.',
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                              )
-                            : ListView.builder(
-                                itemCount: coinMarket!
-                                    .length, // Use the actual length of the data
-                                shrinkWrap:
-                                    false, // Allow the ListView to scroll
-                                controller: ScrollController(),
-                                scrollDirection: Axis.vertical,
-                                itemBuilder: (context, index) {
-                                  return Item(
-                                    item: coinMarket![index],
-                                  );
-                                },
-                              ),
-                  ),
-                  SizedBox(
-                    height: myHeight * 0.02,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: myWidth * 0.05),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Recommend to Buy',
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: myHeight * 0.01,
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: myWidth * 0.03),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.36,
                       child: isRefreshing == true
                           ? Center(
                               child: CircularProgressIndicator(
@@ -340,7 +341,9 @@ class _HomeState extends State<Home> {
                             )
                           : coinMarket == null || coinMarket!.length == 0
                               ? Padding(
-                                  padding: EdgeInsets.all(myHeight * 0.08),
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.height *
+                                          0.06),
                                   child: Center(
                                     child: Text(
                                       'Attention this Api is free, so you cannot send multiple requests per second, please wait and try again later.',
@@ -349,24 +352,76 @@ class _HomeState extends State<Home> {
                                   ),
                                 )
                               : ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: coinMarket!.length,
+                                  itemCount: filteredCoins
+                                      .length, // Use the actual length of the data
+                                  shrinkWrap:
+                                      false, // Allow the ListView to scroll
+                                  controller: ScrollController(),
+                                  scrollDirection: Axis.vertical,
                                   itemBuilder: (context, index) {
-                                    return Item2(
-                                      item: coinMarket![index],
+                                    return Item(
+                                      item: filteredCoins[index],
                                     );
                                   },
                                 ),
                     ),
-                  ),
-                  SizedBox(
-                    height: myHeight * 0.01,
-                  ),
-                ],
-              ),
-            )
-          ],
+                    SizedBox(
+                      height: myHeight * 0.02,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: myWidth * 0.05),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Recommend to Buy',
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: myHeight * 0.01,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: myWidth * 0.03),
+                        child: isRefreshing == true
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: Color(0xffF004BFE),
+                                ),
+                              )
+                            : coinMarket == null || coinMarket!.length == 0
+                                ? Padding(
+                                    padding: EdgeInsets.all(myHeight * 0.08),
+                                    child: Center(
+                                      child: Text(
+                                        'Attention this Api is free, so you cannot send multiple requests per second, please wait and try again later.',
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: coinMarket!.length,
+                                    itemBuilder: (context, index) {
+                                      return Item2(
+                                        item: coinMarket![index],
+                                      );
+                                    },
+                                  ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: myHeight * 0.01,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

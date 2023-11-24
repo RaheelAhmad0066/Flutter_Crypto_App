@@ -26,9 +26,11 @@ class LoginControler extends GetxController {
           context,
           MaterialPageRoute(builder: ((context) => NavBar())),
           (route) => false);
-      Get.snackbar('Success', 'Login successful');
+      Get.snackbar('Success', 'Login successful',
+          backgroundColor: Colors.grey[300], colorText: Colors.black);
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      Get.snackbar('Error', e.toString(),
+          backgroundColor: Colors.grey[300], colorText: Colors.black);
     } finally {
       isLoading.value = false;
     }
@@ -57,9 +59,11 @@ class RagisterControler extends GetxController {
           context,
           MaterialPageRoute(builder: ((context) => NavBar())),
           (route) => false);
-      Get.snackbar('Success', 'Registration successful');
+      Get.snackbar('Success', 'Registration successful',
+          backgroundColor: Colors.grey[300], colorText: Colors.black);
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      Get.snackbar('Error', e.toString(),
+          backgroundColor: Colors.grey[300], colorText: Colors.black);
     } finally {
       isLoading.value = false;
     }
@@ -84,7 +88,6 @@ class RagisterControler extends GetxController {
         .collection("users")
         .doc(user.uid)
         .set(userModel.toMap());
-    Get.snackbar('Register', 'Account created successfully :)');
   }
 }
 
@@ -98,9 +101,11 @@ class ForgetPassword extends GetxController {
       isLoading.value = true;
       await _auth.sendPasswordResetEmail(email: emailController.text.trim());
       Get.to(LoginScreen());
-      Get.snackbar('Success', 'Password reset email sent');
+      Get.snackbar('Success', 'Password reset email sent',
+          backgroundColor: Colors.grey[300], colorText: Colors.black);
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      Get.snackbar('Error', e.toString(),
+          backgroundColor: Colors.grey[300], colorText: Colors.black);
     } finally {
       isLoading.value = false;
     }

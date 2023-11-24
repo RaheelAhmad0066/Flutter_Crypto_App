@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/View/LoginScreen.dart';
+import 'package:crypto/View/RegisterScreen.dart';
+import 'package:crypto/View/navBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Admobservices/admobs.dart';
 import '../Model/UserModal.dart';
@@ -20,21 +25,50 @@ class _UserprofileState extends State<Userprofile> {
   InterstitialAd? intersialad;
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
+  late SharedPreferences _prefs;
   @override
   void initState() {
     // TODO: implement initState
     _createbannerad();
     _createintersestadd();
+    _initSharedPreferences();
+    _fetchUserData();
     showinterstedadd();
-    FirebaseFirestore.instance
+    super.initState();
+  }
+
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
+  Future<void> _fetchUserData() async {
+    final snapshot = await FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
-        .get()
-        .then((value) {
-      this.loggedInUser = UserModel.fromMap(value.data());
-      setState(() {});
-    });
-    super.initState();
+        .get();
+
+    if (snapshot.exists) {
+      this.loggedInUser = UserModel.fromMap(snapshot.data()!);
+      setState(() {
+        _saveUserDataInSharedPreferences(
+          displayName: loggedInUser.firstName,
+          email: loggedInUser.email,
+        );
+      });
+    }
+  }
+
+  Future<void> _saveUserDataInSharedPreferences({
+    required String? displayName,
+    required String? email,
+  }) async {
+    if (displayName != null) {
+      await _prefs.setString('displayName', displayName);
+    }
+
+    if (email != null) {
+      await _prefs.setString('email', email);
+    }
   }
 
   void _createbannerad() {
@@ -44,6 +78,17 @@ class _UserprofileState extends State<Userprofile> {
         listener: Admobservice.bannerAdListener,
         request: const AdRequest())
       ..load();
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: ((context) => LoginScreen())),
+        (route) => false);
   }
 
   void _createintersestadd() {
@@ -75,6 +120,7 @@ class _UserprofileState extends State<Userprofile> {
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -88,7 +134,7 @@ class _UserprofileState extends State<Userprofile> {
             color: Colors.black,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Get.to(NavBar());
           },
         ),
       ),
@@ -98,15 +144,24 @@ class _UserprofileState extends State<Userprofile> {
             height: myHeight * 0.1,
           ),
           Center(
-            child: CircleAvatar(
-              radius: 60,
-              backgroundImage: NetworkImage(
-                  'https://st3.depositphotos.com/15648834/17930/v/450/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg'),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: CircleAvatar(
+                backgroundColor: Colors.grey,
+                radius: 40,
+                child: user?.photoURL != null
+                    ? Image.network(user!.photoURL.toString())
+                    : Icon(
+                        Icons.person,
+                        size: 50,
+                        color: Colors.black,
+                      ),
+              ),
             ),
           ),
           SizedBox(height: 20),
           Text(
-            loggedInUser.firstName.toString(),
+            user?.displayName ?? loggedInUser.firstName ?? 'Name...',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -114,7 +169,7 @@ class _UserprofileState extends State<Userprofile> {
           ),
           SizedBox(height: 10),
           Text(
-            loggedInUser.email.toString(),
+            user?.email ?? loggedInUser.email ?? '',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey,
@@ -141,6 +196,34 @@ class _UserprofileState extends State<Userprofile> {
                   });
                 },
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: InkWell(
+              onTap: () {
+                signOut();
+              },
+              child: Container(
+                  height: myHeight * 0.07,
+                  width: myWidth * 0.9,
+                  decoration: BoxDecoration(boxShadow: [
+                    BoxShadow(
+                        blurRadius: 1,
+                        offset: Offset(2, 2),
+                        color: Color.fromARGB(255, 208, 204, 204))
+                  ], color: color, borderRadius: BorderRadius.circular(22)),
+                  child: Center(
+                    child: Text(
+                      'Logout',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall!
+                          .copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.normal),
+                    ),
+                  )),
             ),
           ),
         ],

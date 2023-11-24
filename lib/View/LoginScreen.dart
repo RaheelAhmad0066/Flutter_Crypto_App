@@ -117,16 +117,12 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Container(
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/image/crypto.jpg'),
-                fit: BoxFit.cover,
-              ),
+              color: Color(0xffF004BFE),
             ),
             height: myHeight * 1,
           ),
           Container(
-            color:
-                Color(0xffF004BFE).withOpacity(0.4), // Adjust opacity as needed
+            color: color.withOpacity(0.4), // Adjust opacity as needed
             height: myHeight * 1,
           ),
           Positioned(
@@ -138,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Image.asset(
                     'assets/image/cry.png',
                     height: myHeight * 0.3,
-                    color: Colors.white,
+                    color: Colors.grey[300],
                   ),
                   Text(
                     'Crypto Track',
@@ -156,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Container(
               height: myHeight * 0.5,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.grey[300],
                   borderRadius: BorderRadiusDirectional.only(
                       topEnd: Radius.circular(25),
                       topStart: Radius.circular(26))),
@@ -179,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Please sign in to continue',
                         style:
                             Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  color: Colors.grey,
+                                  color: Colors.black,
                                 ),
                       ),
                       SizedBox(height: myHeight * 0.03),
@@ -216,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   .textTheme
                                   .labelLarge!
                                   .copyWith(
-                                    color: Colors.grey,
+                                    color: Colors.black,
                                   ),
                             ),
                             TextButton(
