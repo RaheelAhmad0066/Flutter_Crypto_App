@@ -138,95 +138,100 @@ class _UserprofileState extends State<Userprofile> {
           },
         ),
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: myHeight * 0.1,
-          ),
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: CircleAvatar(
-                backgroundColor: Colors.grey,
-                radius: 40,
-                child: user?.photoURL != null
-                    ? Image.network(user!.photoURL.toString())
-                    : Icon(
-                        Icons.person,
-                        size: 50,
-                        color: Colors.black,
-                      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: myHeight * 0.1,
+            ),
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  radius: 40,
+                  child: user?.photoURL != null
+                      ? Image.network(user!.photoURL.toString())
+                      : Icon(
+                          Icons.person,
+                          size: 50,
+                          color: Colors.black,
+                        ),
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 20),
-          Text(
-            user?.displayName ?? loggedInUser.firstName ?? 'Name...',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            user?.email ?? loggedInUser.email ?? '',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(
-            height: myHeight * 0.04,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Container(
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                    blurRadius: 1,
-                    offset: Offset(2, 2),
-                    color: const Color.fromARGB(255, 208, 204, 204))
-              ], color: Colors.white, borderRadius: BorderRadius.circular(22)),
-              child: SwitchListTile(
-                title: Text('Mute Notifications'),
-                value: isNotificationMuted,
-                onChanged: (value) {
-                  setState(() {
-                    isNotificationMuted = value;
-                  });
-                },
+            SizedBox(height: 20),
+            Text(
+              user?.displayName ?? loggedInUser.firstName ?? 'Name...',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: InkWell(
-              onTap: () {
-                signOut();
-              },
+            SizedBox(height: 10),
+            Text(
+              user?.email ?? loggedInUser.email ?? '',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+            SizedBox(
+              height: myHeight * 0.04,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(18.0),
               child: Container(
-                  height: myHeight * 0.07,
-                  width: myWidth * 0.9,
-                  decoration: BoxDecoration(boxShadow: [
-                    BoxShadow(
-                        blurRadius: 1,
-                        offset: Offset(2, 2),
-                        color: Color.fromARGB(255, 208, 204, 204))
-                  ], color: color, borderRadius: BorderRadius.circular(22)),
-                  child: Center(
-                    child: Text(
-                      'Logout',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall!
-                          .copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.normal),
-                    ),
-                  )),
+                decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 1,
+                          offset: Offset(2, 2),
+                          color: const Color.fromARGB(255, 208, 204, 204))
+                    ],
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(22)),
+                child: SwitchListTile(
+                  title: Text('Mute Notifications'),
+                  value: isNotificationMuted,
+                  onChanged: (value) {
+                    setState(() {
+                      isNotificationMuted = value;
+                    });
+                  },
+                ),
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: InkWell(
+                onTap: () {
+                  signOut();
+                },
+                child: Container(
+                    height: myHeight * 0.07,
+                    width: myWidth * 0.9,
+                    decoration: BoxDecoration(boxShadow: [
+                      BoxShadow(
+                          blurRadius: 1,
+                          offset: Offset(2, 2),
+                          color: Color.fromARGB(255, 208, 204, 204))
+                    ], color: color, borderRadius: BorderRadius.circular(22)),
+                    child: Center(
+                      child: Text(
+                        'Logout',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.normal),
+                      ),
+                    )),
+              ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: _bannerAd == null
           ? Container()

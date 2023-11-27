@@ -15,7 +15,6 @@ class forgetpassword extends StatefulWidget {
 
 class _forgetpasswordState extends State<forgetpassword> {
   // form key
-  final _formKey = GlobalKey<FormState>();
 
   // editing controller
 
@@ -89,12 +88,7 @@ class _forgetpasswordState extends State<forgetpassword> {
           child: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/image/crypto.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
+            decoration: BoxDecoration(color: color),
             height: myHeight * 1,
           ),
           Container(
@@ -111,7 +105,7 @@ class _forgetpasswordState extends State<forgetpassword> {
                   Image.asset(
                     'assets/image/cry.png',
                     height: myHeight * 0.3,
-                    color: Colors.white,
+                    color: Colors.grey[300],
                   ),
                   Text(
                     'Crypto Track',
@@ -129,7 +123,7 @@ class _forgetpasswordState extends State<forgetpassword> {
             child: Container(
               height: myHeight * 0.5,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.grey[300],
                   borderRadius: BorderRadiusDirectional.only(
                       topEnd: Radius.circular(25),
                       topStart: Radius.circular(26))),
@@ -148,8 +142,8 @@ class _forgetpasswordState extends State<forgetpassword> {
                     ),
                     Text(
                       'Change forget password',
-                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                            color: Colors.grey,
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            color: Colors.black,
                           ),
                     ),
                     SizedBox(height: myHeight * 0.03),
@@ -166,7 +160,7 @@ class _forgetpasswordState extends State<forgetpassword> {
                                 .textTheme
                                 .labelLarge!
                                 .copyWith(
-                                  color: Colors.grey,
+                                  color: Colors.black,
                                 ),
                           ),
                           TextButton(

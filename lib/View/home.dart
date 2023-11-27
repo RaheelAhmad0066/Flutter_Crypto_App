@@ -1,15 +1,15 @@
 import 'dart:async';
-import 'package:crypto/Admobservices/admobs.dart';
-import 'package:crypto/View/RegisterScreen.dart';
+
 import 'package:crypto/View/Notifcation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/get_core.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:badges/badges.dart' as badges;
 import '../Model/coinModel.dart';
+import '../Model/notifcationmodel.dart';
 import 'Components/item.dart';
 import 'Components/item2.dart';
 
@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
     // Fetch crypto data initially
     getCoinMarket();
 
-    const durat = Duration(minutes: 2);
+    const durat = Duration(minutes: 5);
 
     Timer.periodic(durat, (Timer t) => showNotification());
     if (coinMarket != null) {
@@ -117,9 +117,9 @@ class _HomeState extends State<Home> {
           title: ' ${coin.name}',
           content: '\$${coin.currentPrice!.toStringAsFixed(2)}',
           percentage:
-              '\$${coin.marketCapChangePercentage24H!.toStringAsFixed(2) + '%'}',
-          price:
               '${coin.priceChange24H.toString().contains('-') ? "-\$" + coin.priceChange24H!.toStringAsFixed(2).toString().replaceAll('-', '') : "\$" + coin.priceChange24H!.toStringAsFixed(2)}',
+          price:
+              '${coin.marketCapChangePercentage24H!.toStringAsFixed(2) + '%'}',
           imag: coin.image!);
       notif.add(notification);
       // Build the notification details with the coin image
@@ -152,20 +152,6 @@ class _HomeState extends State<Home> {
         payload: 'item x',
       );
     }
-  }
-
-  int notificationCount = 0;
-
-  void onNotificationAdded(int count) {
-    setState(() {
-      notificationCount = count;
-    });
-  }
-
-  void onNotificationDeleted(int count) {
-    setState(() {
-      notificationCount = count;
-    });
   }
 
   // List<Coin> coinMarket = []; // replace 'Coin' with your actual data type
@@ -339,15 +325,23 @@ class _HomeState extends State<Home> {
                                 color: Color(0xffF004BFE),
                               ),
                             )
-                          : coinMarket == null || coinMarket!.length == 0
+                          : filteredCoins == null || filteredCoins.length == 0
                               ? Padding(
                                   padding: EdgeInsets.all(
                                       MediaQuery.of(context).size.height *
                                           0.06),
                                   child: Center(
-                                    child: Text(
-                                      'Attention this Api is free, so you cannot send multiple requests per second, please wait and try again later.',
-                                      style: TextStyle(fontSize: 18),
+                                    child: Column(
+                                      children: [
+                                        Image.asset(
+                                          'assets/image/search.png',
+                                          height: myHeight * 0.2,
+                                        ),
+                                        Text(
+                                          'Please Search a Market Coine',
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 )
@@ -360,13 +354,10 @@ class _HomeState extends State<Home> {
                                   scrollDirection: Axis.vertical,
                                   itemBuilder: (context, index) {
                                     return Item(
-                                      item: filteredCoins[index],
+                                      items: filteredCoins[index],
                                     );
                                   },
                                 ),
-                    ),
-                    SizedBox(
-                      height: myHeight * 0.02,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: myWidth * 0.05),
@@ -426,20 +417,4 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
-
-class NotificationModel {
-  String title;
-  String content;
-  String imag;
-  dynamic price;
-  dynamic percentage;
-
-  NotificationModel({
-    required this.title,
-    required this.content,
-    required this.imag,
-    required this.price,
-    required this.percentage,
-  });
 }

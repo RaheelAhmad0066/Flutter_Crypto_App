@@ -1,12 +1,10 @@
 import 'dart:async';
 
 import 'package:crypto/View/LoginScreen.dart';
-import 'package:crypto/View/home.dart';
+import 'package:crypto/View/RegisterScreen.dart';
 import 'package:crypto/View/navBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import 'splash.dart';
 
 class IO extends StatefulWidget {
   const IO({Key? key}) : super(key: key);
@@ -53,16 +51,11 @@ class _IOState extends State<IO> {
           body: Stack(
             children: [
               Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/image/crypto.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                decoration: BoxDecoration(color: color),
                 height: myHeight * 1,
               ),
               Container(
-                color: Colors.blue.withOpacity(0.5), // Adjust opacity as needed
+                color: color.withOpacity(0.5), // Adjust opacity as needed
                 height: myHeight * 1,
               ),
               Column(

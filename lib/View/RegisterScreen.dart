@@ -1,5 +1,4 @@
 import 'package:crypto/View/LoginScreen.dart';
-import 'package:crypto/View/home.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +24,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String? errorMessage;
 
   // our form key
-  final _formKey = GlobalKey<FormState>();
   // editing Controller
 
   final controler = Get.put(RagisterControler());

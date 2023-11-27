@@ -1,4 +1,3 @@
-import 'package:crypto/View/navBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -173,10 +172,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       Text(
                         'Please sign in to continue',
-                        style:
-                            Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  color: Colors.black,
-                                ),
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                              color: Colors.black,
+                            ),
                       ),
                       SizedBox(height: myHeight * 0.03),
                       emailField,
@@ -193,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Forget password ?',
                             style: Theme.of(context)
                                 .textTheme
-                                .labelMedium!
+                                .labelLarge!
                                 .copyWith(
                                     color: Color(0xffF004BFE),
                                     fontWeight: FontWeight.bold),

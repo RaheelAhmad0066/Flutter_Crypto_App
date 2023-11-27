@@ -23,7 +23,7 @@ class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
-    double myWidth = MediaQuery.of(context).size.width;
+    // double myWidth = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,

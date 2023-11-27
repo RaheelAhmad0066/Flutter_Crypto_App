@@ -1,16 +1,14 @@
+import 'package:crypto/View/RegisterScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
+import 'Addnotifcation.dart';
 import 'home.dart';
 import 'navBar.dart';
 
+import 'package:get/get.dart';
+
 class AnotherPage extends StatefulWidget {
-  final Function(int)? onNotificationAdded;
-  final Function(int)? onNotificationDeleted;
   const AnotherPage({
     super.key,
-    this.onNotificationAdded,
-    this.onNotificationDeleted,
   });
 
   @override
@@ -21,13 +19,6 @@ class _AnotherPageState extends State<AnotherPage> {
   void deleteNotification(int index) {
     setState(() {
       notif.removeAt(index);
-    });
-  }
-
-  void addNotification(NotificationModel notification) {
-    setState(() {
-      notif.add(notification);
-      widget.onNotificationAdded!(notif.length); // Notify home screen
     });
   }
 
@@ -55,6 +46,13 @@ class _AnotherPageState extends State<AnotherPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: color,
+        onPressed: () {
+          Get.to(AddNotifcation());
+        },
+        child: Icon(Icons.add),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
@@ -204,6 +202,12 @@ class _AnotherPageState extends State<AnotherPage> {
                             style: TextStyle(
                                 color: Colors.black), // Set text color to white
                           ),
+                          Text(' '),
+                          Text(
+                            notif[index].price.toString(),
+                            style: TextStyle(
+                                color: Colors.black), // Set text color to white
+                          ),
                         ],
                       ),
                     ],
@@ -217,3 +221,6 @@ class _AnotherPageState extends State<AnotherPage> {
     );
   }
 }
+
+///// importan code
+

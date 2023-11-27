@@ -34,312 +34,294 @@ class _SelectCoinState extends State<SelectCoin> {
     double myWidth = MediaQuery.of(context).size.width;
     return SafeArea(
         child: Scaffold(
-      body: Container(
-        height: myHeight,
-        width: myWidth,
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: myWidth * 0.05, vertical: myHeight * 0.02),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                          height: myHeight * 0.08,
-                          child: Image.network(widget.selectItem.image)),
-                      SizedBox(
-                        width: myWidth * 0.03,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.selectItem.id,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: myHeight * 0.01,
-                          ),
-                          Text(
-                            widget.selectItem.symbol,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '\$' + widget.selectItem.currentPrice.toString(),
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black),
-                      ),
-                      SizedBox(
-                        height: myHeight * 0.01,
-                      ),
-                      Text(
-                        widget.selectItem.marketCapChangePercentage24H
-                                .toString() +
-                            '%',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            color: widget.selectItem
-                                        .marketCapChangePercentage24H >=
-                                    0
-                                ? Colors.green
-                                : Colors.red),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Divider(),
-            Expanded(
-                child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: myWidth * 0.05, vertical: myHeight * 0.02),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            'Low',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey),
-                          ),
-                          SizedBox(
-                            height: myHeight * 0.01,
-                          ),
-                          Text(
-                            '\$' + widget.selectItem.low24H.toString(),
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.black),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            'High',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey),
-                          ),
-                          SizedBox(
-                            height: myHeight * 0.01,
-                          ),
-                          Text(
-                            '\$' + widget.selectItem.high24H.toString(),
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.black),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            'Vol',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey),
-                          ),
-                          SizedBox(
-                            height: myHeight * 0.01,
-                          ),
-                          Text(
-                            '\$' +
-                                widget.selectItem.totalVolume.toString() +
-                                'M',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: myHeight * 0.015,
-                ),
-                Container(
-                  height: myHeight * 0.4,
-                  width: myWidth,
-                  // color: Colors.amber,
-                  child: isRefresh == true
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xffF004BFE),
-                          ),
-                        )
-                      : itemChart == null
-                          ? Padding(
-                              padding: EdgeInsets.all(myHeight * 0.06),
-                              child: Center(
-                                child: Text(
-                                  'Attention this Api is free, so you cannot send multiple requests per second, please wait and try again later.',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ),
-                            )
-                          : SfCartesianChart(
-                              trackballBehavior: trackballBehavior,
-                              zoomPanBehavior: ZoomPanBehavior(
-                                  enablePinching: true, zoomMode: ZoomMode.x),
-                              series: <CandleSeries>[
-                                CandleSeries<ChartModel, int>(
-                                    enableSolidCandles: true,
-                                    enableTooltip: true,
-                                    bullColor: Colors.green,
-                                    bearColor: Colors.red,
-                                    dataSource: itemChart!,
-                                    xValueMapper: (ChartModel sales, _) =>
-                                        sales.time,
-                                    lowValueMapper: (ChartModel sales, _) =>
-                                        sales.low,
-                                    highValueMapper: (ChartModel sales, _) =>
-                                        sales.high,
-                                    openValueMapper: (ChartModel sales, _) =>
-                                        sales.open,
-                                    closeValueMapper: (ChartModel sales, _) =>
-                                        sales.close,
-                                    animationDuration: 55)
-                              ],
-                            ),
-                ),
-                SizedBox(
-                  height: myHeight * 0.01,
-                ),
-                Center(
-                  child: Container(
-                    height: myHeight * 0.03,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: text.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: myWidth * 0.02),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                textBool = [
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false
-                                ];
-                                textBool[index] = true;
-                              });
-                              setDays(text[index]);
-                              getChart();
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: myWidth * 0.03,
-                                  vertical: myHeight * 0.005),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: textBool[index] == true
-                                    ? Color(0xffF004BFE).withOpacity(0.3)
-                                    : Colors.transparent,
-                              ),
-                              child: Text(
-                                text[index],
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: myHeight * 0.04,
-                ),
-                Expanded(
-                    child: ListView(
+      body: SingleChildScrollView(
+        child: Container(
+          height: myHeight,
+          width: myWidth,
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: myWidth * 0.05, vertical: myHeight * 0.02),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: myWidth * 0.06),
-                      child: Text(
-                        'News',
-                        style: TextStyle(fontSize: 25),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: myWidth * 0.06,
-                          vertical: myHeight * 0.01),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                              textAlign: TextAlign.justify,
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 17),
+                    Row(
+                      children: [
+                        Container(
+                            height: myHeight * 0.08,
+                            child: Image.network(widget.selectItem.image)),
+                        SizedBox(
+                          width: myWidth * 0.03,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.selectItem.id,
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
-                          ),
-                          Container(
-                            width: myWidth * 0.25,
-                            child: CircleAvatar(
-                              radius: myHeight * 0.04,
-                              backgroundImage:
-                                  AssetImage('assets/image/11.PNG'),
+                            SizedBox(
+                              height: myHeight * 0.01,
+                            ),
+                            Text(
+                              widget.selectItem.symbol,
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '\$' + widget.selectItem.currentPrice.toString(),
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black),
+                        ),
+                        SizedBox(
+                          height: myHeight * 0.01,
+                        ),
+                        Text(
+                          widget.selectItem.marketCapChangePercentage24H
+                                  .toString() +
+                              '%',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              color: widget.selectItem
+                                          .marketCapChangePercentage24H >=
+                                      0
+                                  ? Colors.green
+                                  : Colors.red),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Divider(),
+              Expanded(
+                  child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: myWidth * 0.05, vertical: myHeight * 0.02),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Text(
+                              'Low',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.grey),
+                            ),
+                            SizedBox(
+                              height: myHeight * 0.01,
+                            ),
+                            Text(
+                              '\$' + widget.selectItem.low24H.toString(),
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              'High',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.grey),
+                            ),
+                            SizedBox(
+                              height: myHeight * 0.01,
+                            ),
+                            Text(
+                              '\$' + widget.selectItem.high24H.toString(),
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              'Vol',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.grey),
+                            ),
+                            SizedBox(
+                              height: myHeight * 0.01,
+                            ),
+                            Text(
+                              '\$' +
+                                  widget.selectItem.totalVolume.toString() +
+                                  'M',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: myHeight * 0.015,
+                  ),
+                  Container(
+                    height: myHeight * 0.4,
+                    width: myWidth,
+                    // color: Colors.amber,
+                    child: isRefresh == true
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xffF004BFE),
                             ),
                           )
-                        ],
-                      ),
-                    )
-                  ],
-                ))
-              ],
-            )),
-            Container(
-              height: myHeight * 0.06,
-              width: myWidth,
-              // color: Colors.amber,
-              child: Column(
-                children: [
-                  Divider(),
+                        : itemChart == null
+                            ? Padding(
+                                padding: EdgeInsets.all(myHeight * 0.06),
+                                child: Center(
+                                  child: Text(
+                                    'Attention this Api is free, so you cannot send multiple requests per second, please wait and try again later.',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              )
+                            : SfCartesianChart(
+                                trackballBehavior: trackballBehavior,
+                                zoomPanBehavior: ZoomPanBehavior(
+                                    enablePinching: true, zoomMode: ZoomMode.x),
+                                series: <CandleSeries>[
+                                  CandleSeries<ChartModel, int>(
+                                      enableSolidCandles: true,
+                                      enableTooltip: true,
+                                      bullColor: Colors.green,
+                                      bearColor: Colors.red,
+                                      dataSource: itemChart!,
+                                      xValueMapper: (ChartModel sales, _) =>
+                                          sales.time,
+                                      lowValueMapper: (ChartModel sales, _) =>
+                                          sales.low,
+                                      highValueMapper: (ChartModel sales, _) =>
+                                          sales.high,
+                                      openValueMapper: (ChartModel sales, _) =>
+                                          sales.open,
+                                      closeValueMapper: (ChartModel sales, _) =>
+                                          sales.close,
+                                      animationDuration: 55)
+                                ],
+                              ),
+                  ),
                   SizedBox(
                     height: myHeight * 0.01,
                   ),
+                  Center(
+                    child: Container(
+                      height: myHeight * 0.04,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: text.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: myWidth * 0.02),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textBool = [
+                                    false,
+                                    false,
+                                    false,
+                                    false,
+                                    false,
+                                    false
+                                  ];
+                                  textBool[index] = true;
+                                });
+                                setDays(text[index]);
+                                getChart();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: myWidth * 0.03,
+                                    vertical: myHeight * 0.005),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: textBool[index] == true
+                                      ? Color(0xffF004BFE).withOpacity(0.3)
+                                      : Colors.transparent,
+                                ),
+                                child: Text(
+                                  text[index],
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: myHeight * 0.04,
+                  ),
+                  Expanded(
+                      child: ListView(
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: myWidth * 0.06),
+                        child: Text(
+                          'News',
+                          style: TextStyle(fontSize: 25),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: myWidth * 0.06,
+                            vertical: myHeight * 0.01),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'According to Foresight News, Huang Licheng, also known as Brother Maji, has deposited 3,000 ETH (approximately \$6.22 million) into Blast. The transaction was monitored by Lookonchain.\n\nCreditors of the crypto derivatives exchange CoinFLEX are alleging that the newly established creditor claims marketplace OPNX, founded by bankrupt crypto hedge fund Three Arrows Capital (3AC) co-founders Kyle Davies and Su Zhu, wrongfully used CoinFLEX assets without their consent.\n\nThe accusations are detailed in a writ of summons filed in the High Court of Hong Kong and was first reported on by Cointelegraph on Thursday. \n\nThe plaintiffs, Liquidity Technologies and Liquidity Technologies Software, entities associated with CoinFLEX’s original operations, claim that OPNX co-founder and former CoinFLEX CEO Mark Lamb misappropriated assets, intellectual properties, and trade secrets of CoinFLEX during his tenure.The filing alleged that Lamb diverted clients and business opportunities to OPNX, solicited employees and contractors, and engaged in actions detrimental to CoinFLEX creditors.',
+                                textAlign: TextAlign.justify,
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 17),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ))
                 ],
-              ),
-            )
-          ],
+              )),
+            ],
+          ),
         ),
       ),
     ));
