@@ -39,6 +39,7 @@ class _ItemState extends State<Item> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(widget.items.marketCapRank.toString()),
               Expanded(
                 child: Container(
                   height: myHeight * 0.05,

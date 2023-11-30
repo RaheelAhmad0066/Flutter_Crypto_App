@@ -84,16 +84,11 @@ class _forgetpasswordState extends State<forgetpassword> {
     );
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
           child: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(color: color),
-            height: myHeight * 1,
-          ),
-          Container(
-            color:
-                Color(0xffF004BFE).withOpacity(0.4), // Adjust opacity as needed
             height: myHeight * 1,
           ),
           Positioned(
@@ -105,7 +100,6 @@ class _forgetpasswordState extends State<forgetpassword> {
                   Image.asset(
                     'assets/image/cry.png',
                     height: myHeight * 0.3,
-                    color: Colors.grey[300],
                   ),
                   Text(
                     'Crypto Track',

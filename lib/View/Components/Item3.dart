@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Addnotifcation.dart';
+import '../Notifcation.dart';
 
 class Itemm extends StatefulWidget {
   var items;
@@ -25,25 +26,25 @@ class _ItemmState extends State<Itemm> {
 
   @override
   void initState() {
-    super.initState();
-
-    // Initialize the local notifications plugin
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-    );
-    flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-    );
+    var initializationSettingsIOS = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        onDidReceiveLocalNotification:
+            (int id, String? title, String? body, String? payload) async {});
 
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
     // Schedule the notification to be shown after 3 seconds
     final durat = Duration(minutes: widget.selected);
-
-    Timer.periodic(durat, (Timer t) => showNotification('', ''));
+    Timer.periodic(durat, (Timer t) => showNotification());
+    super.initState();
   }
 
-  Future<void> showNotification(String title, String body) async {
+  Future<void> showNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'your channel id',
       'your channel name',
@@ -58,8 +59,8 @@ class _ItemmState extends State<Itemm> {
 
     await flutterLocalNotificationsPlugin.show(
       0,
-      title,
-      body,
+      '${widget.items.id.toString()} \$${widget.items.currentPrice.toString()}/+(${widget.items.priceChange24H.toString().contains('-') ? "-\$" + widget.items.priceChange24H.toStringAsFixed(2).toString().replaceAll('-', '') : "\$" + widget.items.priceChange24H.toStringAsFixed(2)})',
+      widget.items.marketCapChangePercentage24H.toStringAsFixed(2) + '%',
       platformChannelSpecifics,
       payload: 'item x',
     );
@@ -67,18 +68,12 @@ class _ItemmState extends State<Itemm> {
 
   void updateNotification(String updatedText) {
     flutterLocalNotificationsPlugin.cancel(0);
-    showNotification('Updated Text', updatedText);
+    showNotification();
   }
 
   final _isLoading = false.obs;
 
   void _showSnackbarAndLoader() async {
-    Get.snackbar(
-      'Snackbar is showing',
-      '',
-      duration: Duration(seconds: 2),
-    );
-
     _isLoading.value = true;
 
     // Simulating a delay of 4 seconds
@@ -121,13 +116,33 @@ class _ItemmState extends State<Itemm> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: Text(widget.items.id),
-                  content: Text('Please Update Your Notifcation'),
+                  title: Row(
+                    children: [
+                      Image.network(
+                        widget.items.image,
+                        width: myHeight * 0.05,
+                      ),
+                      SizedBox(
+                        width: myWidth * 0.04,
+                      ),
+                      Text(widget.items.id),
+                    ],
+                  ),
+                  content:
+                      Text('Please Update Your Notifcation by default 1 Hour'),
                   actions: [
                     InkWell(
                       onTap: () {
                         _isLoading.value ? null : _showSnackbarAndLoader();
                         updateNotification(widget.items.id);
+                        showNotification();
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => NotifcationPage(
+                                      item: widget.items,
+                                    ))),
+                            ((route) => false));
                       },
                       child: Obx(
                         () => _isLoading.value
@@ -155,11 +170,14 @@ class _ItemmState extends State<Itemm> {
                   ],
                 );
               });
+
+          showUpgradePopup(context);
         },
         child: Container(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(widget.items.marketCapRank.toString()),
               Expanded(
                 child: Container(
                   height: myHeight * 0.05,
@@ -267,5 +285,42 @@ class _ItemmState extends State<Itemm> {
         ),
       ),
     );
+  }
+
+  Future<void> showUpgradePopup(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool packageUpgraded = prefs.getBool('packageUpgraded') ?? false;
+
+    if (!packageUpgraded) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(widget.items.id),
+            content: Text("Please select minutes input"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  // Perform upgrade logic here
+                  // Once upgraded, set the flag in shared preferences
+                  prefs.setBool('packageUpgraded', true);
+
+                  // Close the popup
+                  Navigator.pop(context);
+                },
+                child: Text("Upgrade"),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Close the popup without upgrading
+                  Navigator.pop(context);
+                },
+                child: Text("Cancel"),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }

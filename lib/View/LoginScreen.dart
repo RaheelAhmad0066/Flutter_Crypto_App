@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../Controler/GoolgleAuth.dart';
 import '../Controler/UserLoginControler.dart';
 import 'RegisterScreen.dart';
 import 'forgetpassword.dart';
@@ -16,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // form key
 
   // editing controller
+  final googleauth = Get.put(GoogleAuth());
 
   String? errorMessage;
   final logincontorler = Get.put(LoginControler());
@@ -111,17 +113,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
           child: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
-              color: Color(0xffF004BFE),
-            ),
-            height: myHeight * 1,
-          ),
-          Container(
-            color: color.withOpacity(0.4), // Adjust opacity as needed
             height: myHeight * 1,
           ),
           Positioned(
@@ -133,7 +129,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   Image.asset(
                     'assets/image/cry.png',
                     height: myHeight * 0.3,
-                    color: Colors.grey[300],
                   ),
                   Text(
                     'Crypto Track',
@@ -145,11 +140,11 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Positioned(
-            top: myHeight * 0.5,
+            top: myHeight * 0.4,
             left: 10.0,
             right: 10.0,
             child: Container(
-              height: myHeight * 0.5,
+              height: myHeight * 0.6,
               decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadiusDirectional.only(
@@ -201,6 +196,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(height: myHeight * 0.03),
                       loginButton,
                       SizedBox(height: myHeight * 0.02),
+                      Center(
+                        child: Text(
+                          'Or Login with',
+                          style:
+                              Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    color: Colors.black,
+                                  ),
+                        ),
+                      ),
+                      SizedBox(height: myHeight * 0.02),
+                      InkWell(
+                        onTap: () {
+                          googleauth.handleSignInAndNavigateToHome(context);
+                        },
+                        child: Center(
+                            child: Image.asset(
+                          'assets/image/google.png',
+                          width: myWidth * 0.1,
+                        )),
+                      ),
                       Center(
                         child: Row(
                           children: [

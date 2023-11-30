@@ -47,15 +47,10 @@ class _IOState extends State<IO> {
     double myWidth = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Color(0xffF004BFE),
+          backgroundColor: Theme.of(context).colorScheme.background,
           body: Stack(
             children: [
               Container(
-                decoration: BoxDecoration(color: color),
-                height: myHeight * 1,
-              ),
-              Container(
-                color: color.withOpacity(0.5), // Adjust opacity as needed
                 height: myHeight * 1,
               ),
               Column(

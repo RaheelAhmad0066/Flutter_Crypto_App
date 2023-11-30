@@ -177,30 +177,7 @@ class _UserprofileState extends State<Userprofile> {
               ),
             ),
             SizedBox(
-              height: myHeight * 0.04,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 1,
-                          offset: Offset(2, 2),
-                          color: const Color.fromARGB(255, 208, 204, 204))
-                    ],
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(22)),
-                child: SwitchListTile(
-                  title: Text('Mute Notifications'),
-                  value: isNotificationMuted,
-                  onChanged: (value) {
-                    setState(() {
-                      isNotificationMuted = value;
-                    });
-                  },
-                ),
-              ),
+              height: myHeight * 0.1,
             ),
             Padding(
               padding: const EdgeInsets.all(18.0),

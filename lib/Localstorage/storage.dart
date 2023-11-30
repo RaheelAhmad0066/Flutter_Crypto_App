@@ -1,21 +1,14 @@
 import 'package:shared_preferences/shared_preferences.dart';
 class LocalStorage{
-    static Future<bool> addFavorite(String id) async {
+   static Future<bool> saveTheme(String theme) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    List<String> favorites = sharedPreferences.getStringList("favorites") ?? [];
-    favorites.add(id);
-    return await sharedPreferences.setStringList("favorites", favorites);
+    bool result = await sharedPreferences.setString("theme", theme);
+    return result;
   }
 
-  static Future<bool> removeFavorite(String id) async {
+  static Future<String?> getTheme() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    List<String> favorites = sharedPreferences.getStringList("favorites") ?? [];
-    favorites.remove(id);
-    return await sharedPreferences.setStringList("favorites", favorites);
-  }
-
-  static Future<List<String>> fetchFavorites() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getStringList("favorites") ?? [];
+    String? currentTheme = sharedPreferences.getString("theme");
+    return currentTheme;
   }
 }

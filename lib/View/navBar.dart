@@ -16,7 +16,7 @@ class _NavBarState extends State<NavBar> {
 
   List<Widget> pages = [
     Home(),
-    AnotherPage(),
+    NotifcationPage(),
     Userprofile(),
   ];
 
@@ -41,6 +41,7 @@ class _NavBarState extends State<NavBar> {
             }),
             items: [
               BottomNavigationBarItem(
+                  backgroundColor: Theme.of(context).primaryColor,
                   icon: Image.asset(
                     'assets/icons/1.1.png',
                     height: myHeight * 0.03,

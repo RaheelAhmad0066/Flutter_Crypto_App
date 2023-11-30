@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../Controler/GoolgleAuth.dart';
 import '../Controler/UserLoginControler.dart';
 import 'navBar.dart';
 
-const color = Color(0xffF004BFE);
+const color = Color.fromARGB(255, 24, 80, 209);
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -18,8 +19,6 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  final _auth = FirebaseAuth.instance;
-
   // string for displaying the error Message
   String? errorMessage;
 
@@ -28,46 +27,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   final controler = Get.put(RagisterControler());
 
-  final GoogleSignIn googleSignIn = GoogleSignIn();
+  final googleauth = Get.put(GoogleAuth());
 
   Future<void> loaddata() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.getString('userName') ?? '';
     prefs.getString('userEmail') ?? '';
     prefs.getString('userImage') ?? '';
-  }
-
-  Future<void> handleSignInAndNavigateToHome() async {
-    try {
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-
-      if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-
-        UserCredential? userCredential =
-            await _auth.signInWithCredential(credential);
-
-        if (userCredential != null) {
-          // Store user information in SharedPreferences
-          final prefs = await SharedPreferences.getInstance();
-          prefs.setString('userName', userCredential.user?.displayName ?? '');
-          prefs.setString('userEmail', userCredential.user?.email ?? '');
-          prefs.setString('userImage', userCredential.user?.photoURL ?? '');
-
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: ((context) => NavBar())),
-              (route) => false);
-        }
-      }
-    } catch (error) {
-      print(error);
-    }
   }
 
   @override
@@ -195,22 +161,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
         child: SingleChildScrollView(
             child: Stack(
           children: [
             Container(
-              decoration: BoxDecoration(color: color
-                  // image: DecorationImage(
-                  //   image: AssetImage('assets/image/crypto.jpg'),
-                  //   fit: BoxFit.cover,
-                  // ),
-                  ),
-              height: myHeight * 1,
-            ),
-            Container(
-              color: Color(0xffF004BFE)
-                  .withOpacity(0.4), // Adjust opacity as needed
               height: myHeight * 1,
             ),
             Positioned(
@@ -222,7 +178,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     Image.asset(
                       'assets/image/cry.png',
                       height: myHeight * 0.3,
-                      color: Colors.grey[400],
                     ),
                     Text(
                       'Crypto Track',
@@ -325,7 +280,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                         SizedBox(height: myHeight * 0.02),
                         InkWell(
-                          onTap: handleSignInAndNavigateToHome,
+                          onTap: () {
+                            googleauth.handleSignInAndNavigateToHome(context);
+                          },
                           child: Center(
                               child: Image.asset(
                             'assets/image/google.png',

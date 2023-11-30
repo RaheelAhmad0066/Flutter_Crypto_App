@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 List<CoinModel> coinModelFromJson(String str) =>
     List<CoinModel>.from(json.decode(str).map((x) => CoinModel.fromJson(x)));
 
@@ -8,21 +10,21 @@ String coinModelToJson(List<CoinModel> data) =>
 
 class CoinModel {
   CoinModel({
-     this.id,
-     this.symbol,
-     this.name,
-     this.image,
-     this.currentPrice,
+    this.id,
+    this.symbol,
+    this.name,
+    this.image,
+    this.currentPrice,
     //   this.marketCap,
-     this.marketCapRank,
+    this.marketCapRank,
     //   this.fullyDilutedValuation,
-     this.totalVolume,
-     this.high24H,
-     this.low24H,
-     this.priceChange24H,
+    this.totalVolume,
+    this.high24H,
+    this.low24H,
+    this.priceChange24H,
     //   this.priceChangePercentage24H,
     //   this.marketCapChange24H,
-     this.marketCapChangePercentage24H,
+    this.marketCapChangePercentage24H,
     //   this.circulatingSupply,
     //   this.totalSupply,
     //   this.maxSupply,
@@ -34,7 +36,7 @@ class CoinModel {
     //   this.atlDate,
     //  this.roi,
     //   this.lastUpdated,
-     this.sparklineIn7D,
+    this.sparklineIn7D,
   });
 
   String? id;

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:crypto/Constant/themeconstant.dart';
+import 'package:crypto/Theme/Themeconstant.dart';
 import 'package:crypto/View/Notifcation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -8,8 +10,9 @@ import 'package:get/get_core/get_core.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:badges/badges.dart' as badges;
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/coinModel.dart';
-import '../Model/notifcationmodel.dart';
 import 'Components/item.dart';
 import 'Components/item2.dart';
 
@@ -23,7 +26,6 @@ class Home extends StatefulWidget {
 bool isNotificationMuted = false;
 List<String> notifications = [];
 List<CoinModel>? coinMarket;
-List<NotificationModel> notif = [];
 
 class _HomeState extends State<Home> {
   bool isRefreshing = true;
@@ -33,30 +35,8 @@ class _HomeState extends State<Home> {
       FlutterLocalNotificationsPlugin();
   @override
   void initState() {
-    super.initState();
-    // Initialize FlutterLocalNotificationsPlugin
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOS = DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-        onDidReceiveLocalNotification:
-            (int id, String? title, String? body, String? payload) async {});
-
-    var initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-    // Fetch crypto data initially
     getCoinMarket();
 
-    const durat = Duration(minutes: 5);
-
-    Timer.periodic(durat, (Timer t) => showNotification());
-    if (coinMarket != null) {
-      filteredCoins.addAll(coinMarket!);
-    }
     super.initState();
   }
 
@@ -80,77 +60,8 @@ class _HomeState extends State<Home> {
       setState(() {
         coinMarket = coinMarketList;
       });
-
-      // Show a notification when the data is updated
-
-      showNotification();
     } else {
       print(response.statusCode);
-    }
-  }
-
-  // Function to show a notification
-  Future<void> showNotification() async {
-    // Select a single coin for simplicity, you can modify this part based on your app's logic
-    if (isNotificationMuted) {
-      return; // Do not show notification if notifications are muted
-    }
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'your_channel_id',
-      'your_channel_name',
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-    );
-
-    var iOSPlatformChannelSpecifics =
-        DarwinNotificationDetails(presentSound: false);
-    var platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iOSPlatformChannelSpecifics);
-
-    for (CoinModel coin in coinMarket!) {
-      // Use the coin's image as the image path
-      String imagePath = 'assets/images/${coin.image}.png';
-      // Add the notification to the list
-      NotificationModel notification = NotificationModel(
-          title: ' ${coin.name}',
-          content: '\$${coin.currentPrice!.toStringAsFixed(2)}',
-          percentage:
-              '${coin.priceChange24H.toString().contains('-') ? "-\$" + coin.priceChange24H!.toStringAsFixed(2).toString().replaceAll('-', '') : "\$" + coin.priceChange24H!.toStringAsFixed(2)}',
-          price:
-              '${coin.marketCapChangePercentage24H!.toStringAsFixed(2) + '%'}',
-          imag: coin.image!);
-      notif.add(notification);
-      // Build the notification details with the coin image
-      final BigPictureStyleInformation bigPictureStyleInformation =
-          BigPictureStyleInformation(
-        FilePathAndroidBitmap(imagePath),
-        contentTitle:
-            '${coin.name}--> \$${coin.currentPrice!.toStringAsFixed(2)}',
-        summaryText:
-            '${coin.priceChange24H.toString().contains('-') ? "-\$" + coin.priceChange24H!.toStringAsFixed(2).toString().replaceAll('-', '') : "\$" + coin.priceChange24H!.toStringAsFixed(2)}${coin.marketCapChangePercentage24H!.toStringAsFixed(2) + '%'}',
-      );
-
-      final NotificationDetails platformChannelSpecifics = NotificationDetails(
-        android: AndroidNotificationDetails(
-          'your_channel_id', // Change this to your channel ID
-          'your_channel_name', // Change this to your channel name
-          // Change this to your channel description
-          importance: Importance.max,
-          priority: Priority.high,
-          styleInformation: bigPictureStyleInformation,
-        ),
-      );
-
-      // Show the notification
-      await flutterLocalNotificationsPlugin.show(
-        0,
-        'Crypto Data Updated',
-        'Details about the crypto data', // You can customize this message as needed
-        platformChannelSpecifics,
-        payload: 'item x',
-      );
     }
   }
 
@@ -181,23 +92,36 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
+    ThemeProvider themeProvider =
+        Provider.of<ThemeProvider>(context, listen: false);
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         child: Container(
           height: myHeight,
           width: myWidth,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xffF004BFE),
-                  Color(0xffF004BFE),
-                ]),
-          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Theme",
+                    style: TextStyle(fontSize: 15, color: Colors.white),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      themeProvider.toggleTheme();
+                    },
+                    icon: (themeProvider.themeMode == ThemeMode.light)
+                        ? Icon(
+                            Icons.lightbulb_sharp,
+                          )
+                        : Icon(Icons.lightbulb_sharp),
+                  ),
+                ],
+              ),
               SizedBox(
                 height: myHeight * 0.01,
               ),
@@ -211,7 +135,6 @@ class _HomeState extends State<Home> {
                         Image.asset(
                           'assets/image/cry.png',
                           height: myHeight * 0.09,
-                          color: Colors.grey[300],
                         ),
                         Text(
                           'rypto Track',
@@ -224,7 +147,7 @@ class _HomeState extends State<Home> {
                     ),
                     InkWell(
                       onTap: () {
-                        Get.to(AnotherPage());
+                        Get.to(NotifcationPage());
                       },
                       child: Container(
                           padding: EdgeInsets.all(myWidth * 0.02),
@@ -254,7 +177,10 @@ class _HomeState extends State<Home> {
                     fillColor: Colors.grey[300],
                     filled: true,
                     hintText: 'Search',
-                    prefixIcon: Icon(Icons.search),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Theme.of(context).primaryColor,
+                    ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                       borderRadius: BorderRadius.all(Radius.circular(26.0)),
@@ -280,7 +206,7 @@ class _HomeState extends State<Home> {
                           spreadRadius: 3,
                           offset: Offset(0, 3))
                     ],
-                    color: Colors.white,
+                    color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(50),
                       topRight: Radius.circular(50),
@@ -364,7 +290,7 @@ class _HomeState extends State<Home> {
                       child: Row(
                         children: [
                           Text(
-                            'Recommend to Buy',
+                            'Top Gainers',
                             style: TextStyle(
                                 fontSize: 22, fontWeight: FontWeight.bold),
                           ),

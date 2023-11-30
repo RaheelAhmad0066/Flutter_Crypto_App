@@ -1,7 +1,7 @@
 import 'package:crypto/View/RegisterScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/coinModel.dart';
 import 'Components/Item3.dart';
 import 'home.dart';
@@ -9,12 +9,12 @@ import 'package:http/http.dart' as http;
 
 class AddNotifcation extends StatefulWidget {
   const AddNotifcation({super.key});
-
   @override
   State<AddNotifcation> createState() => _AddNotifcationState();
 }
 
-int selectedNumber = 30;
+int selectedNumber = 90;
+List<CoinModel> filteredCoins = [];
 
 class _AddNotifcationState extends State<AddNotifcation> {
   @override
@@ -24,13 +24,37 @@ class _AddNotifcationState extends State<AddNotifcation> {
       filteredCoins.addAll(coinMarket!);
     }
     getCoinMarket();
+    getCoinData();
+    saveCoinData(filteredCoins);
     super.initState();
   }
 
+// Save data to shared preferences
+  Future<void> saveCoinData(List<CoinModel> coinData) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'coinData';
+    final value = coinModelToJson(coinData);
+    prefs.setString(key, value);
+  }
+
+// Retrieve data from shared preferences
+  Future<List<CoinModel>> getCoinData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'coinData';
+    final jsonString = prefs.getString(key);
+
+    if (jsonString != null) {
+      return coinModelFromJson(jsonString);
+    } else {
+      // Return an empty list if no data is found
+      return [];
+    }
+  }
+
   TextEditingController searchController = TextEditingController();
-  List<CoinModel> filteredCoins = [];
+
   bool isRefreshing = true;
-  void filterCoins(String query) {
+  void filterCoins(String query) async {
     List<CoinModel> filteredList = [];
     if (coinMarket != null && query.isNotEmpty) {
       for (CoinModel coin in coinMarket!) {
@@ -47,6 +71,7 @@ class _AddNotifcationState extends State<AddNotifcation> {
       filteredCoins.clear();
       filteredCoins.addAll(filteredList);
     });
+    await saveCoinData(filteredCoins);
   }
 
   var coinMarketList;
@@ -116,7 +141,10 @@ class _AddNotifcationState extends State<AddNotifcation> {
                   fillColor: Colors.grey[300],
                   filled: true,
                   hintText: 'Search',
-                  prefixIcon: Icon(Icons.search),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Theme.of(context).primaryColor,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                     borderRadius: BorderRadius.all(Radius.circular(26.0)),
@@ -149,7 +177,7 @@ class _AddNotifcationState extends State<AddNotifcation> {
                               ),
                               Center(
                                 child: Text(
-                                  'Please Update a Coine\n Up to 3 Hour.',
+                                  'Please Update a Coine\n Up to 5,10,30 minut',
                                   style: TextStyle(fontSize: 18),
                                 ),
                               ),
@@ -171,7 +199,7 @@ class _AddNotifcationState extends State<AddNotifcation> {
                         ),
             ),
             SizedBox(
-              height: myHeight * 0.04,
+              height: myHeight * 0.02,
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -200,6 +228,7 @@ class _AddNotifcationState extends State<AddNotifcation> {
   buildNumberBox(int number) {
     return GestureDetector(
       onTap: () {
+        // Update the selected number when a box is tapped
         if (selectedNumber != 0) {
           // Do something with the selected number (store it in a variable)
           print('Selected Number: $selectedNumber');
@@ -207,15 +236,16 @@ class _AddNotifcationState extends State<AddNotifcation> {
           // User hasn't selected any number
           print('Please select a number first.');
         }
-        // Update the selected number when a box is tapped
         setState(() {
           selectedNumber = number;
         });
+        showSuperTooltip(context, number);
       },
       child: Container(
         decoration: BoxDecoration(
-            color: selectedNumber == number ? color : Colors.grey[300],
-            borderRadius: BorderRadius.circular(20)),
+          color: selectedNumber == number ? color : Colors.grey[300],
+          borderRadius: BorderRadius.circular(20),
+        ),
         width: 80,
         height: 80,
         child: Center(
@@ -229,5 +259,41 @@ class _AddNotifcationState extends State<AddNotifcation> {
         ),
       ),
     );
+  }
+
+  void showSuperTooltip(BuildContext context, int number) {
+    final overlay = Overlay.of(context);
+
+    OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: 8,
+        left: MediaQuery.of(context).size.width / 2 - 75,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              'Do you want to set a bitcoin \n notification for 5 minutes?: $number',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+
+    // Wait for a moment and then remove the overlay
+    Future.delayed(Duration(seconds: 2), () {
+      overlayEntry.remove();
+    });
   }
 }
