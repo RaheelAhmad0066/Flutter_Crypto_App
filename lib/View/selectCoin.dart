@@ -79,13 +79,14 @@ class _SelectCoinState extends State<SelectCoin> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          '\$' + widget.selectItem.currentPrice.toString(),
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black),
-                        ),
+                        Text('\$' + widget.selectItem.currentPrice.toString(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge!
+                                .copyWith(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                )),
                         SizedBox(
                           height: myHeight * 0.01,
                         ),
@@ -129,24 +130,26 @@ class _SelectCoinState extends State<SelectCoin> {
                             SizedBox(
                               height: myHeight * 0.01,
                             ),
-                            Text(
-                              '\$' + widget.selectItem.low24H.toString(),
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black),
-                            ),
+                            Text('\$' + widget.selectItem.low24H.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                    )),
                           ],
                         ),
                         Column(
                           children: [
-                            Text(
-                              'High',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.grey),
-                            ),
+                            Text('High',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                    )),
                             SizedBox(
                               height: myHeight * 0.01,
                             ),
@@ -161,13 +164,14 @@ class _SelectCoinState extends State<SelectCoin> {
                         ),
                         Column(
                           children: [
-                            Text(
-                              'Vol',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.grey),
-                            ),
+                            Text('Vol',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                    )),
                             SizedBox(
                               height: myHeight * 0.01,
                             ),

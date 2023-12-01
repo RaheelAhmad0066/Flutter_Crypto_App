@@ -35,9 +35,86 @@ class _HomeState extends State<Home> {
       FlutterLocalNotificationsPlugin();
   @override
   void initState() {
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        onDidReceiveLocalNotification:
+            (int id, String? title, String? body, String? payload) async {});
+
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    // Fetch crypto data initially
     getCoinMarket();
 
+    const durat = Duration(minutes: 1);
+
+    Timer.periodic(durat, (Timer t) => showNotification());
+    if (coinMarket != null) {
+      filteredCoins.addAll(coinMarket!);
+    }
     super.initState();
+  }
+
+// Function to show a notification
+  Future<void> showNotification() async {
+    // Select a single coin for simplicity, you can modify this part based on your app's logic
+    if (isNotificationMuted) {
+      return; // Do not show notification if notifications are muted
+    }
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your_channel_id',
+      'your_channel_name',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+
+    var iOSPlatformChannelSpecifics =
+        DarwinNotificationDetails(presentSound: false);
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics);
+
+    for (CoinModel coin in coinMarket!) {
+      // Use the coin's image as the image path
+      String imagePath = 'assets/images/${coin.image}.png';
+      // Add the notification to the list
+
+      // Build the notification details with the coin image
+      final BigPictureStyleInformation bigPictureStyleInformation =
+          BigPictureStyleInformation(
+        FilePathAndroidBitmap(imagePath),
+        contentTitle:
+            '${coin.id.toString()} \$${coin.currentPrice.toString()}/+(${coin.priceChange24H.toString().contains('-') ? "-\$" + coin.priceChange24H!.toStringAsFixed(2).toString().replaceAll('-', '') : "\$" + coin.priceChange24H!.toStringAsFixed(2)})',
+        summaryText:
+            '${coin.marketCapChangePercentage24H!.toStringAsFixed(2) + '%'}',
+      );
+
+      final NotificationDetails platformChannelSpecifics = NotificationDetails(
+        android: AndroidNotificationDetails(
+          'your_channel_id', // Change this to your channel ID
+          'your_channel_name', // Change this to your channel name
+          // Change this to your channel description
+          importance: Importance.max,
+          priority: Priority.high,
+          styleInformation: bigPictureStyleInformation,
+        ),
+      );
+
+      // Show the notification
+      await flutterLocalNotificationsPlugin.show(
+        0,
+        'Crypto Data Updated',
+        'Details about the crypto data', // You can customize this message as needed
+        platformChannelSpecifics,
+        payload: 'item x',
+      );
+    }
   }
 
   Future<void> getCoinMarket() async {
@@ -60,6 +137,7 @@ class _HomeState extends State<Home> {
       setState(() {
         coinMarket = coinMarketList;
       });
+      showNotification();
     } else {
       print(response.statusCode);
     }
@@ -179,7 +257,7 @@ class _HomeState extends State<Home> {
                     hintText: 'Search',
                     prefixIcon: Icon(
                       Icons.search,
-                      color: Theme.of(context).primaryColor,
+                      color: Color(0xff3B3B3B),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
@@ -236,7 +314,7 @@ class _HomeState extends State<Home> {
                               backgroundColor: Colors.grey.withOpacity(0.3),
                               child: Icon(
                                 Icons.refresh,
-                                color: Colors.black,
+                                color: Colors.white,
                               ),
                             ),
                           ),

@@ -108,15 +108,15 @@ class _NotifcationPageState extends State<NotifcationPage> {
         ),
       ),
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: Text(
           'Notification Page',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(
+              color: Theme.of(context).appBarTheme.titleTextStyle!.color),
         ),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.black,
+            color: Theme.of(context).appBarTheme.iconTheme!.color,
           ),
           onPressed: () {
             Navigator.push(

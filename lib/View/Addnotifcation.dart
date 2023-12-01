@@ -108,16 +108,14 @@ class _AddNotifcationState extends State<AddNotifcation> {
     double myWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: Text(
           'Update Notifcation',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(
+              color: Theme.of(context).appBarTheme.titleTextStyle!.color),
         ),
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-          ),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).appBarTheme.iconTheme!.color),
           onPressed: () {
             Get.back();
           },

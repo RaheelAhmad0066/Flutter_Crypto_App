@@ -123,15 +123,15 @@ class _UserprofileState extends State<Userprofile> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: Text(
           'User Profile',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(
+              color: Theme.of(context).appBarTheme.titleTextStyle!.color),
         ),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.black,
+            color: Theme.of(context).appBarTheme.iconTheme!.color,
           ),
           onPressed: () {
             Get.to(NavBar());
@@ -177,7 +177,36 @@ class _UserprofileState extends State<Userprofile> {
               ),
             ),
             SizedBox(
-              height: myHeight * 0.1,
+              height: myHeight * 0.04,
+            ),
+            Padding(
+              padding: EdgeInsets.all(18.0),
+              child: Container(
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                      blurRadius: 1,
+                      offset: Offset(2, 2),
+                      color: const Color.fromARGB(255, 208, 204, 204))
+                ], color: color, borderRadius: BorderRadius.circular(22)),
+                child: SwitchListTile(
+                  // thumbColor: Colors.white,
+                  activeColor: Colors.white,
+
+                  title: Text(
+                    'Mute Notifications',
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        fontSize: 19,
+                        color: Colors.white,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  value: isNotificationMuted,
+                  onChanged: (value) {
+                    setState(() {
+                      isNotificationMuted = value;
+                    });
+                  },
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(18.0),

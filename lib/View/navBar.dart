@@ -32,7 +32,8 @@ class _NavBarState extends State<NavBar> {
             currentIndex: _currentIndex,
             showSelectedLabels: false,
             showUnselectedLabels: false,
-            backgroundColor: Colors.white,
+            backgroundColor:
+                Theme.of(context).bottomNavigationBarTheme.backgroundColor,
             type: BottomNavigationBarType.fixed,
             onTap: ((value) {
               setState(() {
