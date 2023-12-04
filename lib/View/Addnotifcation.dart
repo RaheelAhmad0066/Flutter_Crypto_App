@@ -277,7 +277,7 @@ class _AddNotifcationState extends State<AddNotifcation> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              'Do you want to set a bitcoin \n notification for 5 minutes?: $number',
+              'Do you want to set a bitcoin \n notification for $number minutes?: ',
               style: TextStyle(
                 color: Colors.white,
               ),

@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
     // Fetch crypto data initially
     getCoinMarket();
 
-    const durat = Duration(minutes: 1);
+    const durat = Duration(minutes: 5);
 
     Timer.periodic(durat, (Timer t) => showNotification());
     if (coinMarket != null) {
@@ -137,7 +137,6 @@ class _HomeState extends State<Home> {
       setState(() {
         coinMarket = coinMarketList;
       });
-      showNotification();
     } else {
       print(response.statusCode);
     }
@@ -325,8 +324,21 @@ class _HomeState extends State<Home> {
                       height: MediaQuery.of(context).size.height * 0.36,
                       child: isRefreshing == true
                           ? Center(
-                              child: CircularProgressIndicator(
-                                color: Color(0xffF004BFE),
+                              child: Column(
+                                children: [
+                                  CircularProgressIndicator(
+                                    color: Color(0xffF004BFE),
+                                  ),
+                                  SizedBox(
+                                    height: myHeight * 0.06,
+                                  ),
+                                  Text(
+                                    'Many api requests\n for a moment....',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal),
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
                               ),
                             )
                           : filteredCoins == null || filteredCoins.length == 0
