@@ -126,7 +126,9 @@ class _UserprofileState extends State<Userprofile> {
         title: Text(
           'User Profile',
           style: TextStyle(
-              color: Theme.of(context).appBarTheme.titleTextStyle!.color),
+              color: Theme.of(context).appBarTheme.titleTextStyle!.color,
+              fontSize: 19,
+              fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
           icon: Icon(

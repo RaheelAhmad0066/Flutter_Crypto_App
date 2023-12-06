@@ -111,7 +111,9 @@ class _NotifcationPageState extends State<NotifcationPage> {
         title: Text(
           'Notification Page',
           style: TextStyle(
-              color: Theme.of(context).appBarTheme.titleTextStyle!.color),
+              color: Theme.of(context).appBarTheme.titleTextStyle!.color,
+              fontSize: 19,
+              fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
           icon: Icon(

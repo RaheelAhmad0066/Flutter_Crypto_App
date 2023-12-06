@@ -22,14 +22,30 @@ class LoginControler extends GetxController {
         email: emailController.text.trim(),
         password: passwordController.text,
       );
+
+      // If login is successful, navigate to the home screen
       Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: ((context) => NavBar())),
-          (route) => false);
+        context,
+        MaterialPageRoute(builder: ((context) => NavBar())),
+        (route) => false,
+      );
+
       Get.snackbar('Success', 'Login successful',
           backgroundColor: Colors.grey[300], colorText: Colors.black);
     } catch (e) {
-      Get.snackbar('Error', e.toString(),
+      String errorMessage = 'Please try again.';
+
+      // Check if the error is due to incorrect email or password
+      if (e is FirebaseAuthException) {
+        if (e.code == 'user-not-found') {
+          errorMessage = 'User not found. Please check your email.';
+        } else if (e.code == 'wrong-password') {
+          errorMessage = 'Incorrect password. Please try again.';
+        }
+      }
+
+      // Display the error message
+      Get.snackbar('Error', errorMessage,
           backgroundColor: Colors.grey[300], colorText: Colors.black);
     } finally {
       isLoading.value = false;
@@ -54,6 +70,7 @@ class RagisterControler extends GetxController {
             password: passwordController.text,
           )
           .then((value) => postDetailsToFirestore());
+
       // Additional logic for saving user details, if needed
       Navigator.pushAndRemoveUntil(
           context,
@@ -61,6 +78,17 @@ class RagisterControler extends GetxController {
           (route) => false);
       Get.snackbar('Success', 'Registration successful',
           backgroundColor: Colors.grey[300], colorText: Colors.black);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        Get.snackbar('Error', 'The email address is already in use',
+            backgroundColor: Colors.grey[300], colorText: Colors.black);
+      } else if (e.code == 'invalid-email') {
+        Get.snackbar('Error', 'Invalid email address',
+            backgroundColor: Colors.grey[300], colorText: Colors.black);
+      } else {
+        Get.snackbar('Error', e.message ?? 'An error occurred',
+            backgroundColor: Colors.grey[300], colorText: Colors.black);
+      }
     } catch (e) {
       Get.snackbar('Error', e.toString(),
           backgroundColor: Colors.grey[300], colorText: Colors.black);

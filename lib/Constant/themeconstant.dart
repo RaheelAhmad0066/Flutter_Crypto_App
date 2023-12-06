@@ -17,6 +17,7 @@ ThemeData lightTheme = ThemeData(
         labelLarge: TextStyle(
       color: Color(0xff3B3B3B),
     )),
+    dialogTheme: DialogTheme(backgroundColor: Colors.white),
     appBarTheme: AppBarTheme(
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.black),
@@ -24,6 +25,7 @@ ThemeData lightTheme = ThemeData(
 
 ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
+    dialogTheme: DialogTheme(backgroundColor: Color(0xff3B3B3B)),
     primaryColor: Color(0xff3B3B3B),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: Colors.grey.withOpacity(0.3)),

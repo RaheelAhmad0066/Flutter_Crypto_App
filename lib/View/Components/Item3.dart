@@ -116,6 +116,8 @@ class _ItemmState extends State<Itemm> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
+                  backgroundColor:
+                      Theme.of(context).dialogTheme.backgroundColor,
                   title: Row(
                     children: [
                       Image.network(
@@ -128,8 +130,8 @@ class _ItemmState extends State<Itemm> {
                       Text(widget.items.id),
                     ],
                   ),
-                  content:
-                      Text('Please Update Your Notifcation by default 1 Hour'),
+                  content: Text(
+                      'it always says Update to 1 hour but we selected 5 minnutes see in image.'),
                   actions: [
                     InkWell(
                       onTap: () {
@@ -296,6 +298,7 @@ class _ItemmState extends State<Itemm> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
             title: Text(widget.items.id),
             content: Text("Please select minutes input"),
             actions: [

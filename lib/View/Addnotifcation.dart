@@ -24,31 +24,8 @@ class _AddNotifcationState extends State<AddNotifcation> {
       filteredCoins.addAll(coinMarket!);
     }
     getCoinMarket();
-    getCoinData();
-    saveCoinData(filteredCoins);
+
     super.initState();
-  }
-
-// Save data to shared preferences
-  Future<void> saveCoinData(List<CoinModel> coinData) async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'coinData';
-    final value = coinModelToJson(coinData);
-    prefs.setString(key, value);
-  }
-
-// Retrieve data from shared preferences
-  Future<List<CoinModel>> getCoinData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'coinData';
-    final jsonString = prefs.getString(key);
-
-    if (jsonString != null) {
-      return coinModelFromJson(jsonString);
-    } else {
-      // Return an empty list if no data is found
-      return [];
-    }
   }
 
   TextEditingController searchController = TextEditingController();
@@ -71,7 +48,6 @@ class _AddNotifcationState extends State<AddNotifcation> {
       filteredCoins.clear();
       filteredCoins.addAll(filteredList);
     });
-    await saveCoinData(filteredCoins);
   }
 
   var coinMarketList;
@@ -111,7 +87,9 @@ class _AddNotifcationState extends State<AddNotifcation> {
         title: Text(
           'Update Notifcation',
           style: TextStyle(
-              color: Theme.of(context).appBarTheme.titleTextStyle!.color),
+              color: Theme.of(context).appBarTheme.titleTextStyle!.color,
+              fontSize: 19,
+              fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back,
@@ -141,7 +119,7 @@ class _AddNotifcationState extends State<AddNotifcation> {
                   hintText: 'Search',
                   prefixIcon: Icon(
                     Icons.search,
-                    color: Theme.of(context).primaryColor,
+                    color: Color(0xff3B3B3B),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
@@ -167,19 +145,9 @@ class _AddNotifcationState extends State<AddNotifcation> {
                     )
                   : filteredCoins == null || filteredCoins.length == 0
                       ? Center(
-                          child: Column(
-                            children: [
-                              Image.asset(
-                                'assets/image/search.png',
-                                height: myHeight * 0.2,
-                              ),
-                              Center(
-                                child: Text(
-                                  'Please Update a Coine\n Up to 5,10,30 minut',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ),
-                            ],
+                          child: Image.asset(
+                            'assets/image/seachlist.gif',
+                            height: myHeight * 0.2,
                           ),
                         )
                       : ListView.builder(
@@ -277,7 +245,7 @@ class _AddNotifcationState extends State<AddNotifcation> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              'Do you want to set a bitcoin \n notification for 5 minutes?: $number',
+              'Do you want to set a bitcoin \n notification for $number minutes?: ',
               style: TextStyle(
                 color: Colors.white,
               ),

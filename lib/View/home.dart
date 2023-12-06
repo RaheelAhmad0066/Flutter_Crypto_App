@@ -1,17 +1,13 @@
 import 'dart:async';
-
-import 'package:crypto/Constant/themeconstant.dart';
 import 'package:crypto/Theme/Themeconstant.dart';
 import 'package:crypto/View/Notifcation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/get_core.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:badges/badges.dart' as badges;
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/coinModel.dart';
 import 'Components/item.dart';
 import 'Components/item2.dart';
@@ -51,7 +47,7 @@ class _HomeState extends State<Home> {
     // Fetch crypto data initially
     getCoinMarket();
 
-    const durat = Duration(minutes: 1);
+    const durat = Duration(minutes: 5);
 
     Timer.periodic(durat, (Timer t) => showNotification());
     if (coinMarket != null) {
@@ -137,7 +133,6 @@ class _HomeState extends State<Home> {
       setState(() {
         coinMarket = coinMarketList;
       });
-      showNotification();
     } else {
       print(response.statusCode);
     }
@@ -325,8 +320,21 @@ class _HomeState extends State<Home> {
                       height: MediaQuery.of(context).size.height * 0.36,
                       child: isRefreshing == true
                           ? Center(
-                              child: CircularProgressIndicator(
-                                color: Color(0xffF004BFE),
+                              child: Column(
+                                children: [
+                                  CircularProgressIndicator(
+                                    color: Color(0xffF004BFE),
+                                  ),
+                                  SizedBox(
+                                    height: myHeight * 0.06,
+                                  ),
+                                  Text(
+                                    'Many api requests\n for a moment....',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal),
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
                               ),
                             )
                           : filteredCoins == null || filteredCoins.length == 0
@@ -338,7 +346,7 @@ class _HomeState extends State<Home> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          'assets/image/search.png',
+                                          'assets/image/seachlist.gif',
                                           height: myHeight * 0.2,
                                         ),
                                         Text(
