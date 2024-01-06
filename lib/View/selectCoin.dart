@@ -1,10 +1,9 @@
 import 'dart:convert';
-
+import 'package:crypto/View/RegisterScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
-
 import '../Model/chartModel.dart';
 
 // ignore: must_be_immutable
@@ -34,6 +33,15 @@ class _SelectCoinState extends State<SelectCoin> {
     double myWidth = MediaQuery.of(context).size.width;
     return SafeArea(
         child: Scaffold(
+      appBar: AppBar(
+        title: Text(
+          widget.selectItem.id,
+          style: Theme.of(context)
+              .textTheme
+              .headlineSmall!
+              .copyWith(fontWeight: FontWeight.normal),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Container(
           height: myHeight,
@@ -42,17 +50,19 @@ class _SelectCoinState extends State<SelectCoin> {
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: myWidth * 0.05, vertical: myHeight * 0.02),
+                  horizontal: MediaQuery.of(context).size.width * 0.02,
+                  vertical: MediaQuery.of(context).size.height * 0.01,
+                ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
                         Container(
-                            height: myHeight * 0.08,
-                            child: Image.network(widget.selectItem.image)),
+                          height: MediaQuery.of(context).size.height * 0.06,
+                          child: Image.network(widget.selectItem.image),
+                        ),
                         SizedBox(
-                          width: myWidth * 0.03,
+                          width: MediaQuery.of(context).size.width * 0.03,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,45 +73,50 @@ class _SelectCoinState extends State<SelectCoin> {
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
-                              height: myHeight * 0.01,
+                              height: MediaQuery.of(context).size.height * 0.01,
                             ),
                             Text(
                               widget.selectItem.symbol,
                               style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.grey),
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey,
+                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.2,
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text('\$' + widget.selectItem.currentPrice.toString(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelLarge!
-                                .copyWith(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
-                                )),
+                        Text(
+                          '\$' + widget.selectItem.currentPrice.toString(),
+                          style:
+                              Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                        ),
                         SizedBox(
-                          height: myHeight * 0.01,
+                          height: MediaQuery.of(context).size.height * 0.01,
                         ),
                         Text(
                           widget.selectItem.marketCapChangePercentage24H
                                   .toString() +
                               '%',
                           style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                              color: widget.selectItem
-                                          .marketCapChangePercentage24H >=
-                                      0
-                                  ? Colors.green
-                                  : Colors.red),
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: widget.selectItem
+                                        .marketCapChangePercentage24H >=
+                                    0
+                                ? Colors.green
+                                : Colors.red,
+                          ),
                         ),
                       ],
                     ),
@@ -120,35 +135,36 @@ class _SelectCoinState extends State<SelectCoin> {
                       children: [
                         Column(
                           children: [
-                            Text(
-                              'Low',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.grey),
-                            ),
-                            SizedBox(
-                              height: myHeight * 0.01,
-                            ),
-                            Text('\$' + widget.selectItem.low24H.toString(),
+                            Text('MARKET CAP',
                                 style: Theme.of(context)
                                     .textTheme
                                     .labelLarge!
                                     .copyWith(
-                                      fontSize: 18,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                            SizedBox(
+                              height: myHeight * 0.01,
+                            ),
+                            Text('\$' + widget.selectItem.marketCap.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 16,
                                       fontWeight: FontWeight.normal,
                                     )),
                           ],
                         ),
                         Column(
                           children: [
-                            Text('High',
+                            Text('24H VOLUEM',
                                 style: Theme.of(context)
                                     .textTheme
                                     .labelLarge!
                                     .copyWith(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.normal,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                     )),
                             SizedBox(
                               height: myHeight * 0.01,
@@ -156,33 +172,29 @@ class _SelectCoinState extends State<SelectCoin> {
                             Text(
                               '\$' + widget.selectItem.high24H.toString(),
                               style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black),
+                                fontSize: 16,
+                              ),
                             ),
                           ],
                         ),
                         Column(
                           children: [
-                            Text('Vol',
+                            Text('RANK',
                                 style: Theme.of(context)
                                     .textTheme
                                     .labelLarge!
                                     .copyWith(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.normal,
+                                      fontWeight: FontWeight.bold,
                                     )),
                             SizedBox(
                               height: myHeight * 0.01,
                             ),
                             Text(
-                              '\$' +
-                                  widget.selectItem.totalVolume.toString() +
-                                  'M',
+                              '#' + widget.selectItem.marketCapRank.toString(),
                               style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black),
+                                fontSize: 16,
+                              ),
                             ),
                           ],
                         ),
@@ -215,25 +227,52 @@ class _SelectCoinState extends State<SelectCoin> {
                             : SfCartesianChart(
                                 trackballBehavior: trackballBehavior,
                                 zoomPanBehavior: ZoomPanBehavior(
-                                    enablePinching: true, zoomMode: ZoomMode.x),
-                                series: <CandleSeries>[
-                                  CandleSeries<ChartModel, int>(
-                                      enableSolidCandles: true,
-                                      enableTooltip: true,
-                                      bullColor: Colors.green,
-                                      bearColor: Colors.red,
-                                      dataSource: itemChart!,
-                                      xValueMapper: (ChartModel sales, _) =>
-                                          sales.time,
-                                      lowValueMapper: (ChartModel sales, _) =>
-                                          sales.low,
-                                      highValueMapper: (ChartModel sales, _) =>
-                                          sales.high,
-                                      openValueMapper: (ChartModel sales, _) =>
-                                          sales.open,
-                                      closeValueMapper: (ChartModel sales, _) =>
-                                          sales.close,
-                                      animationDuration: 55)
+                                  enablePinching: true,
+                                  zoomMode: ZoomMode.x,
+                                ),
+                                series: <LineSeries>[
+                                  LineSeries<ChartModel, int>(
+                                    dataSource: itemChart!,
+                                    xValueMapper: (ChartModel sales, _) =>
+                                        sales.time,
+                                    yValueMapper: (ChartModel sales, _) => sales
+                                        .close, // You can choose any other property like high, low, open, etc. based on your requirement.
+
+                                    sortFieldValueMapper:
+                                        (ChartModel sales, _) => sales.time,
+                                    pointColorMapper: (ChartModel sales, _) =>
+                                        color,
+
+                                    animationDuration: 55,
+                                  ),
+                                  LineSeries<ChartModel, int>(
+                                    dataSource: itemChart!,
+                                    xValueMapper: (ChartModel sales, _) =>
+                                        sales.time,
+                                    yValueMapper: (ChartModel sales, _) => sales
+                                        .close, // You can choose any other property like high, low, open, etc. based on your requirement.
+
+                                    sortFieldValueMapper:
+                                        (ChartModel sales, _) => sales.time,
+                                    pointColorMapper: (ChartModel sales, _) =>
+                                        Colors.red,
+
+                                    animationDuration: 55,
+                                  ),
+                                  LineSeries<ChartModel, int>(
+                                    dataSource: itemChart!,
+                                    xValueMapper: (ChartModel sales, _) =>
+                                        sales.time,
+                                    yValueMapper: (ChartModel sales, _) => sales
+                                        .close, // You can choose any other property like high, low, open, etc. based on your requirement.
+
+                                    sortFieldValueMapper:
+                                        (ChartModel sales, _) => sales.time,
+                                    pointColorMapper: (ChartModel sales, _) =>
+                                        Colors.green,
+
+                                    animationDuration: 55,
+                                  )
                                 ],
                               ),
                   ),
@@ -291,37 +330,200 @@ class _SelectCoinState extends State<SelectCoin> {
                   SizedBox(
                     height: myHeight * 0.04,
                   ),
-                  Expanded(
-                      child: ListView(
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: myWidth * 0.06),
-                        child: Text(
-                          'News',
-                          style: TextStyle(fontSize: 25),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: myWidth * 0.06,
-                            vertical: myHeight * 0.01),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Row(
                           children: [
-                            Expanded(
-                              child: Text(
-                                'According to Foresight News, Huang Licheng, also known as Brother Maji, has deposited 3,000 ETH (approximately \$6.22 million) into Blast. The transaction was monitored by Lookonchain.\n\nCreditors of the crypto derivatives exchange CoinFLEX are alleging that the newly established creditor claims marketplace OPNX, founded by bankrupt crypto hedge fund Three Arrows Capital (3AC) co-founders Kyle Davies and Su Zhu, wrongfully used CoinFLEX assets without their consent.\n\nThe accusations are detailed in a writ of summons filed in the High Court of Hong Kong and was first reported on by Cointelegraph on Thursday. \n\nThe plaintiffs, Liquidity Technologies and Liquidity Technologies Software, entities associated with CoinFLEX’s original operations, claim that OPNX co-founder and former CoinFLEX CEO Mark Lamb misappropriated assets, intellectual properties, and trade secrets of CoinFLEX during his tenure.The filing alleged that Lamb diverted clients and business opportunities to OPNX, solicited employees and contractors, and engaged in actions detrimental to CoinFLEX creditors.',
-                                textAlign: TextAlign.justify,
-                                style:
-                                    TextStyle(color: Colors.grey, fontSize: 17),
-                              ),
+                            Text('Market capitalization',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                            SizedBox(
+                              width: myWidth * 0.01,
                             ),
+                            Icon(
+                              Icons.help_outline_rounded,
+                              size: 18,
+                            ),
+                            SizedBox(
+                              width: myWidth * 0.08,
+                            ),
+                            Text('\$' + widget.selectItem.marketCap.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                    )),
                           ],
                         ),
-                      )
-                    ],
-                  ))
+                        Row(
+                          children: [
+                            Text('24-hour trading volume',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                            SizedBox(
+                              width: myWidth * 0.01,
+                            ),
+                            Icon(
+                              Icons.help_outline_rounded,
+                              size: 18,
+                            ),
+                            SizedBox(
+                              width: myWidth * 0.04,
+                            ),
+                            Text(
+                                '\$' + widget.selectItem.totalVolume.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                    )),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text('Completely watered down review',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                            SizedBox(
+                              width: myWidth * 0.01,
+                            ),
+                            Icon(
+                              Icons.help_outline_rounded,
+                              size: 18,
+                            ),
+                            SizedBox(
+                              width: myWidth * 0.02,
+                            ),
+                            Text(
+                                '\$' +
+                                    widget.selectItem.currentPrice.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                    )),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text('Number in circulation',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                            SizedBox(
+                              width: myWidth * 0.01,
+                            ),
+                            Icon(
+                              Icons.help_outline_rounded,
+                              size: 18,
+                            ),
+                            SizedBox(
+                              width: myWidth * 0.1,
+                            ),
+                            Text(
+                                '\$' +
+                                    widget.selectItem.circulatingSupply
+                                        .toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                    )),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text('Entire offer',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                            SizedBox(
+                              width: myWidth * 0.01,
+                            ),
+                            Icon(
+                              Icons.help_outline_rounded,
+                              size: 18,
+                            ),
+                            SizedBox(
+                              width: myWidth * 0.3,
+                            ),
+                            Text(widget.selectItem.totalSupply.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                    )),
+                          ],
+                        ),
+                        Row(
+                          //
+                          children: [
+                            Text('Maximum stock',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                            SizedBox(
+                              width: myWidth * 0.01,
+                            ),
+                            Icon(
+                              Icons.help_outline_rounded,
+                              size: 18,
+                            ),
+                            SizedBox(
+                              width: myWidth * 0.2,
+                            ),
+                            Text(widget.selectItem.maxSupply.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                    )),
+                          ],
+                        )
+                      ],
+                    ),
+                  )
                 ],
               )),
             ],
@@ -331,7 +533,7 @@ class _SelectCoinState extends State<SelectCoin> {
     ));
   }
 
-  List<String> text = ['D', 'W', 'M', '3M', '6M', 'Y'];
+  List<String> text = ['D', 'W', 'M', '3M', '6H', 'Y'];
   List<bool> textBool = [false, false, true, false, false, false];
 
   int days = 30;

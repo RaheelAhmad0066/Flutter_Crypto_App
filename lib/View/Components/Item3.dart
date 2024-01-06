@@ -1,14 +1,15 @@
 import 'dart:async';
-
 import 'package:chart_sparkline/chart_sparkline.dart';
+import 'package:crypto/View/Addnotifcation.dart';
 import 'package:crypto/View/RegisterScreen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:workmanager/workmanager.dart';
+import '../../Admobservices/admobs.dart';
 import '../Notifcation.dart';
 
 class Itemm extends StatefulWidget {
@@ -26,6 +27,26 @@ class _ItemmState extends State<Itemm> {
 
   @override
   void initState() {
+    notifcation();
+    _createintersestadd();
+    Workmanager().initialize(callbackDispatcher);
+    Workmanager().registerPeriodicTask(
+      "1",
+      "simpleTask",
+      frequency:
+          Duration(minutes: selectedDuration), // Adjust the frequency as needed
+    );
+    super.initState();
+  }
+
+  void callbackDispatcher() {
+    Workmanager().executeTask((task, inputData) {
+      showNotification();
+      return Future.value(true);
+    });
+  }
+
+  void notifcation() {
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = DarwinInitializationSettings(
@@ -38,10 +59,20 @@ class _ItemmState extends State<Itemm> {
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    // Register the background handler for Firebase Messaging
+    FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+    // Listen for FCM messages when the app is in the foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Handle the FCM message when the app is in the foreground
+      showNotification();
+    });
     // Schedule the notification to be shown after 3 seconds
-    final durat = Duration(minutes: widget.selected);
+    final durat = Duration(minutes: selectedDuration);
     Timer.periodic(durat, (Timer t) => showNotification());
-    super.initState();
+  }
+
+  Future<void> handleBackgroundMessage(RemoteMessage message) async {
+    await showNotification();
   }
 
   Future<void> showNotification() async {
@@ -77,41 +108,48 @@ class _ItemmState extends State<Itemm> {
     _isLoading.value = true;
 
     // Simulating a delay of 4 seconds
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 1));
 
     _isLoading.value = false;
     Get.back(); // Uncomment this line if you want to go back automatically
   }
 
-  TimeOfDay selectedTime = TimeOfDay(hour: 10, minute: 30);
-
-  TimeOfDay _selectedTime = TimeOfDay.now();
-
-  Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime,
+  bool isLoading = false;
+  InterstitialAd? intersialad;
+  void _createintersestadd() {
+    InterstitialAd.load(
+      adUnitId: Admobservice.interestitialAndroid!,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          setState(() {
+            intersialad = ad;
+          });
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          setState(() {
+            intersialad = null;
+            isLoading = false;
+          });
+        },
+      ),
     );
-
-    if (picked != null && picked != _selectedTime) {
-      setState(() {
-        _selectedTime = picked;
-      });
-    }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    double myHeight = MediaQuery.of(context).size.height;
-    double myWidth = MediaQuery.of(context).size.width;
+  void showinterstedadd() {
+    if (intersialad != null) {
+      setState(() {
+        isLoading = true;
+      });
 
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: myWidth * 0.05,
-        vertical: myHeight * 0.01,
-      ),
-      child: InkWell(
-        onTap: () {
+      intersialad!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _createintersestadd();
+          setState(() {
+            isLoading = false;
+          });
+
           showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -122,22 +160,23 @@ class _ItemmState extends State<Itemm> {
                     children: [
                       Image.network(
                         widget.items.image,
-                        width: myHeight * 0.05,
+                        width: 33,
                       ),
                       SizedBox(
-                        width: myWidth * 0.04,
+                        width: 34,
                       ),
                       Text(widget.items.id),
                     ],
                   ),
-                  content: Text(
-                      'it always says Update to 1 hour but we selected 5 minnutes see in image.'),
+                  content:
+                      Text('Change notification to 5 minutes or 10 and 30'),
                   actions: [
                     InkWell(
                       onTap: () {
                         _isLoading.value ? null : _showSnackbarAndLoader();
                         updateNotification(widget.items.id);
                         showNotification();
+                        notifcation();
                         Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
@@ -150,8 +189,8 @@ class _ItemmState extends State<Itemm> {
                         () => _isLoading.value
                             ? Center(child: CircularProgressIndicator())
                             : Container(
-                                height: myHeight * 0.06,
-                                width: myWidth * 0.7,
+                                height: 56,
+                                width: 307,
                                 decoration: BoxDecoration(
                                     color: color,
                                     borderRadius: BorderRadius.circular(20)),
@@ -172,8 +211,163 @@ class _ItemmState extends State<Itemm> {
                   ],
                 );
               });
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _createintersestadd();
+          setState(() {
+            isLoading = false;
+          });
 
-          showUpgradePopup(context);
+          // Navigate forward even when ad fails to show
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor:
+                      Theme.of(context).dialogTheme.backgroundColor,
+                  title: Row(
+                    children: [
+                      Image.network(
+                        widget.items.image,
+                        width: 33,
+                      ),
+                      SizedBox(
+                        width: 34,
+                      ),
+                      Text(widget.items.id),
+                    ],
+                  ),
+                  content:
+                      Text('Change notification to 5 minutes or 10 and 30'),
+                  actions: [
+                    InkWell(
+                      onTap: () {
+                        _isLoading.value ? null : _showSnackbarAndLoader();
+                        updateNotification(widget.items.id);
+                        showNotification();
+                        notifcation();
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => NotifcationPage(
+                                      item: widget.items,
+                                    ))),
+                            ((route) => false));
+                      },
+                      child: Obx(
+                        () => _isLoading.value
+                            ? Center(child: CircularProgressIndicator())
+                            : Container(
+                                height: 56,
+                                width: 307,
+                                decoration: BoxDecoration(
+                                    color: color,
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: Center(
+                                  child: Text(
+                                    'Update',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall!
+                                        .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                      ),
+                    )
+                  ],
+                );
+              });
+        },
+      );
+
+      intersialad!.show();
+    } else {
+      // Handle the case when intersialad is null
+      // This could happen if the ad fails to load
+      // Navigate forward in this case as well
+      setState(() {
+        isLoading = false;
+      });
+
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
+              title: Row(
+                children: [
+                  Image.network(
+                    widget.items.image,
+                    width: 33,
+                  ),
+                  SizedBox(
+                    width: 34,
+                  ),
+                  Text(widget.items.id),
+                ],
+              ),
+              content: Text('Change notification to 5 minutes or 10 and 30'),
+              actions: [
+                InkWell(
+                  onTap: () {
+                    _isLoading.value ? null : _showSnackbarAndLoader();
+                    updateNotification(widget.items.id);
+                    showNotification();
+                    notifcation();
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => NotifcationPage(
+                                  item: widget.items,
+                                ))),
+                        ((route) => false));
+                  },
+                  child: Obx(
+                    () => _isLoading.value
+                        ? Center(child: CircularProgressIndicator())
+                        : Container(
+                            height: 56,
+                            width: 307,
+                            decoration: BoxDecoration(
+                                color: color,
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Center(
+                              child: Text(
+                                'Update',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                  ),
+                )
+              ],
+            );
+          });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double myHeight = MediaQuery.of(context).size.height;
+    double myWidth = MediaQuery.of(context).size.width;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: myWidth * 0.05,
+        vertical: myHeight * 0.01,
+      ),
+      child: InkWell(
+        onTap: () {
+          showinterstedadd();
         },
         child: Container(
           child: Row(
@@ -287,43 +481,5 @@ class _ItemmState extends State<Itemm> {
         ),
       ),
     );
-  }
-
-  Future<void> showUpgradePopup(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool packageUpgraded = prefs.getBool('packageUpgraded') ?? false;
-
-    if (!packageUpgraded) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
-            title: Text(widget.items.id),
-            content: Text("Please select minutes input"),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  // Perform upgrade logic here
-                  // Once upgraded, set the flag in shared preferences
-                  prefs.setBool('packageUpgraded', true);
-
-                  // Close the popup
-                  Navigator.pop(context);
-                },
-                child: Text("Upgrade"),
-              ),
-              TextButton(
-                onPressed: () {
-                  // Close the popup without upgrading
-                  Navigator.pop(context);
-                },
-                child: Text("Cancel"),
-              ),
-            ],
-          );
-        },
-      );
-    }
   }
 }

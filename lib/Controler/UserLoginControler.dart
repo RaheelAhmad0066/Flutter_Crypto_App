@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/View/LoginScreen.dart';
-import 'package:crypto/View/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -104,9 +103,9 @@ class RagisterControler extends GetxController {
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
-
     UserModel userModel = UserModel();
 
+    
     // writing all the values
     userModel.email = user!.email;
     userModel.uid = user.uid;

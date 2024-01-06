@@ -22,7 +22,6 @@ class Userprofile extends StatefulWidget {
 
 class _UserprofileState extends State<Userprofile> {
   BannerAd? _bannerAd;
-  InterstitialAd? intersialad;
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
   late SharedPreferences _prefs;
@@ -30,10 +29,10 @@ class _UserprofileState extends State<Userprofile> {
   void initState() {
     // TODO: implement initState
     _createbannerad();
-    _createintersestadd();
+
     _initSharedPreferences();
     _fetchUserData();
-    showinterstedadd();
+
     super.initState();
   }
 
@@ -91,31 +90,6 @@ class _UserprofileState extends State<Userprofile> {
         (route) => false);
   }
 
-  void _createintersestadd() {
-    InterstitialAd.load(
-        adUnitId: Admobservice.interestitialAndroid!,
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-            onAdLoaded: (ad) => intersialad = ad,
-            onAdFailedToLoad: (LoadAdError error) => intersialad = null));
-  }
-
-  void showinterstedadd() {
-    if (intersialad != null) {
-      intersialad!.fullScreenContentCallback = FullScreenContentCallback(
-        onAdDismissedFullScreenContent: (ad) {
-          ad.dispose();
-          _createintersestadd();
-        },
-        onAdFailedToShowFullScreenContent: (ad, error) {
-          ad.dispose();
-          _createintersestadd();
-        },
-      );
-      intersialad!.show();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
@@ -143,6 +117,13 @@ class _UserprofileState extends State<Userprofile> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            _bannerAd == null
+                ? Container()
+                : Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    height: 52,
+                    child: AdWidget(ad: _bannerAd!),
+                  ),
             SizedBox(
               height: myHeight * 0.1,
             ),
@@ -241,13 +222,6 @@ class _UserprofileState extends State<Userprofile> {
           ],
         ),
       ),
-      bottomNavigationBar: _bannerAd == null
-          ? Container()
-          : Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              height: 52,
-              child: AdWidget(ad: _bannerAd!),
-            ),
     );
   }
 }

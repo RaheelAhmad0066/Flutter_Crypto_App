@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:crypto/Admobservices/nativelinepage.dart';
 import 'package:crypto/View/RegisterScreen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import '../Model/coinModel.dart';
 import 'Components/Item3.dart';
 import 'home.dart';
@@ -13,7 +17,7 @@ class AddNotifcation extends StatefulWidget {
   State<AddNotifcation> createState() => _AddNotifcationState();
 }
 
-int selectedNumber = 90;
+Timer? notificationTimer;
 List<CoinModel> filteredCoins = [];
 
 class _AddNotifcationState extends State<AddNotifcation> {
@@ -23,8 +27,8 @@ class _AddNotifcationState extends State<AddNotifcation> {
     if (coinMarket != null) {
       filteredCoins.addAll(coinMarket!);
     }
-    getCoinMarket();
 
+    getCoinMarket();
     super.initState();
   }
 
@@ -78,6 +82,14 @@ class _AddNotifcationState extends State<AddNotifcation> {
     }
   }
 
+  Widget _buildLoadingIndicator() {
+    return Center(
+      child: CircularProgressIndicator(
+        backgroundColor: Colors.black.withOpacity(0.1),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
@@ -110,6 +122,8 @@ class _AddNotifcationState extends State<AddNotifcation> {
               width: myWidth * 0.8,
               child: TextField(
                 controller: searchController,
+                textAlignVertical: TextAlignVertical(y: 0.9),
+                textAlign: TextAlign.left,
                 onChanged: (value) {
                   filterCoins(value);
                 },
@@ -159,7 +173,7 @@ class _AddNotifcationState extends State<AddNotifcation> {
                           itemBuilder: (context, index) {
                             return Itemm(
                               items: filteredCoins[index],
-                              selected: selectedNumber,
+                              selected: selectedDuration,
                             );
                           },
                         ),
@@ -175,51 +189,91 @@ class _AddNotifcationState extends State<AddNotifcation> {
                 textAlign: TextAlign.center,
               ),
             ),
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  buildNumberBox(5),
-                  buildNumberBox(10),
-                  buildNumberBox(30),
-                ],
-              ),
-            )
+            SizedBox(
+              height: myHeight * 0.07,
+            ),
+            ContainerRow(),
           ],
         ),
       ),
     );
   }
 
-  buildNumberBox(int number) {
+  // buildNumberBox(int number) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       print('$storedNumber');
+  //       setState(() {
+  //         storedNumber = number;
+  //       });
+
+  //     },
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         color: storedNumber == number ? color : Colors.grey[300],
+  //         borderRadius: BorderRadius.circular(20),
+  //       ),
+  //       width: 80,
+  //       height: 80,
+  //       child: Center(
+  //         child: Text(
+  //           '$number',
+  //           style: TextStyle(
+  //             fontSize: 20,
+  //             color: storedNumber == number ? Colors.white : Colors.black,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+}
+
+int selectedDuration = 15;
+
+class ContainerRow extends StatefulWidget {
+  @override
+  _ContainerRowState createState() => _ContainerRowState();
+}
+
+class _ContainerRowState extends State<ContainerRow> {
+  // Default value 5 minutes
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        buildContainer(5),
+        buildContainer(10),
+        buildContainer(30),
+      ],
+    );
+  }
+
+  Widget buildContainer(int value) {
     return GestureDetector(
       onTap: () {
-        // Update the selected number when a box is tapped
-        if (selectedNumber != 0) {
-          // Do something with the selected number (store it in a variable)
-          print('Selected Number: $selectedNumber');
-        } else {
-          // User hasn't selected any number
-          print('Please select a number first.');
-        }
         setState(() {
-          selectedNumber = number;
+          selectedDuration = value;
         });
-        showSuperTooltip(context, number);
+        showSuperTooltip(context, value);
+        print('$selectedDuration');
       },
       child: Container(
+        width: 90,
+        height: 50,
         decoration: BoxDecoration(
-          color: selectedNumber == number ? color : Colors.grey[300],
-          borderRadius: BorderRadius.circular(20),
+          color: selectedDuration == value ? color : Colors.grey,
+          borderRadius: BorderRadius.circular(8),
         ),
-        width: 80,
-        height: 80,
         child: Center(
           child: Text(
-            '$number',
+            '$value',
             style: TextStyle(
-              fontSize: 20,
-              color: selectedNumber == number ? Colors.white : Colors.black,
+              color: Colors.white,
+              fontSize: 19,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),

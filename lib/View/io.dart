@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:crypto/View/LoginScreen.dart';
-import 'package:crypto/View/RegisterScreen.dart';
 import 'package:crypto/View/navBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class IO extends StatefulWidget {
   const IO({Key? key}) : super(key: key);
@@ -14,25 +15,53 @@ class IO extends StatefulWidget {
 }
 
 class _IOState extends State<IO> {
+  late AppOpenAd appOpenAd;
+  bool isLoading = true;
+
   @override
   void initState() {
-    // TODO: implement initState
-    islogin();
     super.initState();
+    islogin();
+    loadAppOpenAd();
+  }
+
+  void loadAppOpenAd() {
+    AppOpenAd.load(
+      adUnitId: Platform.isAndroid
+          ? 'ca-app-pub-3940256099942544/9257395921'
+          : 'ca-app-pub-3940256099942544/5575463023',
+      request: AdRequest(),
+      adLoadCallback: AppOpenAdLoadCallback(
+        onAdLoaded: (ad) {
+          setState(() {
+            appOpenAd = ad;
+            isLoading = false;
+            appOpenAd.show();
+          });
+        },
+        onAdFailedToLoad: ((error) {
+          setState(() {
+            isLoading = false;
+          });
+          print('Ad failed to load: $error');
+        }),
+      ),
+      orientation: AppOpenAd.orientationPortrait,
+    );
   }
 
   void islogin() {
     final auth = FirebaseAuth.instance;
     final user = auth.currentUser;
     if (user != null) {
-      Timer(const Duration(seconds: 4), () {
+      Timer(const Duration(seconds: 11), () {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: ((context) => NavBar())),
             (route) => false);
       });
     } else {
-      Timer(const Duration(seconds: 4), () {
+      Timer(const Duration(seconds: 11), () {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: ((context) => LoginScreen())),
@@ -57,7 +86,9 @@ class _IOState extends State<IO> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(''),
+                  SizedBox(
+                    height: myHeight * 0.1,
+                  ),
                   Text(
                     'Crypto Track',
                     style: TextStyle(
@@ -65,6 +96,22 @@ class _IOState extends State<IO> {
                         color: Colors.white,
                         fontWeight: FontWeight.bold),
                   ),
+                  isLoading
+                      ? Column(
+                          children: [
+                            CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              height: myHeight * 0.02,
+                            ),
+                            Text(
+                              'Ads Loading.....',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        )
+                      : Container(),
                   Column(
                     children: [
                       Row(

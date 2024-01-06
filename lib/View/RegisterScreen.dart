@@ -1,13 +1,9 @@
 import 'package:crypto/View/LoginScreen.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Controler/GoolgleAuth.dart';
 import '../Controler/UserLoginControler.dart';
-import 'navBar.dart';
 
 const color = Color.fromARGB(255, 24, 80, 209);
 

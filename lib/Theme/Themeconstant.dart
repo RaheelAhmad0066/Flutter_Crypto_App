@@ -42,7 +42,7 @@ class ThemeProvider with ChangeNotifier {
   ThemeData getTheme() {
     return themeMode == ThemeMode.light ? _lightTheme : _darkTheme;
   }
-
+  
   void toggleTheme() async {
     if (themeMode == ThemeMode.light) {
       themeMode = ThemeMode.dark;

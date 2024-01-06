@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 List<CoinModel> coinModelFromJson(String str) =>
     List<CoinModel>.from(json.decode(str).map((x) => CoinModel.fromJson(x)));
 
@@ -15,7 +13,7 @@ class CoinModel {
     this.name,
     this.image,
     this.currentPrice,
-    //   this.marketCap,
+    this.marketCap,
     this.marketCapRank,
     //   this.fullyDilutedValuation,
     this.totalVolume,
@@ -25,17 +23,17 @@ class CoinModel {
     //   this.priceChangePercentage24H,
     //   this.marketCapChange24H,
     this.marketCapChangePercentage24H,
-    //   this.circulatingSupply,
-    //   this.totalSupply,
-    //   this.maxSupply,
-    //   this.ath,
+    this.circulatingSupply,
+    this.totalSupply,
+    this.maxSupply,
+    this.ath,
     //   this.athChangePercentage,
     //   this.athDate,
     //   this.atl,
     //   this.atlChangePercentage,
     //   this.atlDate,
-    //  this.roi,
-    //   this.lastUpdated,
+    this.roi,
+    this.lastUpdated,
     this.sparklineIn7D,
   });
 
@@ -44,7 +42,7 @@ class CoinModel {
   String? name;
   String? image;
   double? currentPrice;
-  // int marketCap;
+  int? marketCap;
   int? marketCapRank;
   bool isFaviouret = false;
   // int fullyDilutedValuation;
@@ -55,17 +53,17 @@ class CoinModel {
   // double? priceChangePercentage24H;
   // int marketCapChange24H;
   double? marketCapChangePercentage24H;
-  // int circulatingSupply;
-  // int totalSupply;
-  // int maxSupply;
-  // int ath;
+  int? circulatingSupply;
+  int? totalSupply;
+  int? maxSupply;
+  int? ath;
   // double? athChangePercentage;
   // DateTime athDate;
   // double atl;
   // double atlChangePercentage;
   // DateTime atlDate;
-  // dynamic roi;
-  // DateTime lastUpdated;
+  dynamic roi;
+  DateTime? lastUpdated;
   SparklineIn7D? sparklineIn7D;
 
   factory CoinModel.fromJson(Map<String, dynamic> json) => CoinModel(
@@ -74,7 +72,7 @@ class CoinModel {
         name: json["name"],
         image: json["image"],
         currentPrice: json["current_price"].toDouble(),
-        // marketCap: json["market_cap"],
+        marketCap: json["market_cap"],
         marketCapRank: json["market_cap_rank"],
         // fullyDilutedValuation: json["fully_diluted_valuation"],
         totalVolume: json["total_volume"].toDouble(),
@@ -85,17 +83,17 @@ class CoinModel {
         // marketCapChange24H: json["market_cap_change_24h"],
         marketCapChangePercentage24H:
             json["market_cap_change_percentage_24h"]?.toDouble(),
-        // circulatingSupply: json["circulating_supply"],
-        // totalSupply: json["total_supply"],
-        // maxSupply: json["max_supply"],
-        // ath: json["ath"],
+        circulatingSupply: (json["circulating_supply"] as num?)?.toInt(),
+        totalSupply: json["total_supply"]?.toInt(),
+        maxSupply: json["max_supply"]?.toInt(),
+        ath: json["ath"]?.toInt(),
         // athChangePercentage: json["ath_change_percentage"]?.toDouble(),
         // athDate: DateTime.parse(json["ath_date"]),
         // atl: json["atl"]?.toDouble(),
         // atlChangePercentage: json["atl_change_percentage"]?.toDouble(),
         // atlDate: DateTime.parse(json["atl_date"]),
-        // roi: json["roi"],
-        // lastUpdated: DateTime.parse(json["last_updated"]),
+        roi: json["roi"],
+        lastUpdated: DateTime.parse(json["last_updated"]),
         sparklineIn7D: SparklineIn7D.fromJson(json["sparkline_in_7d"]),
       );
 
@@ -105,7 +103,7 @@ class CoinModel {
         "name": name,
         "image": image,
         "current_price": currentPrice,
-        // "market_cap": marketCap,
+        "market_cap": marketCap,
         "market_cap_rank": marketCapRank,
         // "fully_diluted_valuation": fullyDilutedValuation,
         "total_volume": totalVolume,
@@ -115,17 +113,17 @@ class CoinModel {
         // "price_change_percentage_24h": priceChangePercentage24H,
         // "market_cap_change_24h": marketCapChange24H,
         "market_cap_change_percentage_24h": marketCapChangePercentage24H,
-        // "circulating_supply": circulatingSupply,
-        // "total_supply": totalSupply,
-        // "max_supply": maxSupply,
-        // "ath": ath,
+        "circulating_supply": circulatingSupply,
+        "total_supply": totalSupply,
+        "max_supply": maxSupply,
+        "ath": ath,
         // "ath_change_percentage": athChangePercentage,
         // "ath_date": athDate.toIso8601String(),
         // "atl": atl,
         // "atl_change_percentage": atlChangePercentage,
         // "atl_date": atlDate.toIso8601String(),
-        // "roi": roi,
-        // "last_updated": lastUpdated.toIso8601String(),
+        "roi": roi,
+        "last_updated": lastUpdated!.toIso8601String(),
         "sparkline_in_7d": sparklineIn7D!.toJson(),
       };
 }

@@ -8,6 +8,7 @@ import 'package:get/get_core/get_core.dart';
 import 'package:http/http.dart' as http;
 import 'package:badges/badges.dart' as badges;
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
 import '../Model/coinModel.dart';
 import 'Components/item.dart';
 import 'Components/item2.dart';
@@ -31,6 +32,7 @@ class _HomeState extends State<Home> {
       FlutterLocalNotificationsPlugin();
   @override
   void initState() {
+    Workmanager().initialize(callbackDispatcher);
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = DarwinInitializationSettings(
@@ -47,15 +49,29 @@ class _HomeState extends State<Home> {
     // Fetch crypto data initially
     getCoinMarket();
 
-    const durat = Duration(minutes: 5);
-
-    Timer.periodic(durat, (Timer t) => showNotification());
     if (coinMarket != null) {
       filteredCoins.addAll(coinMarket!);
     }
+
+    Workmanager().registerPeriodicTask(
+      "1",
+      "simpleTask",
+      frequency: Duration(minutes: 5), // Adjust the frequency as needed
+    );
+    // Schedule periodic notifications using Timer
+    const duration = Duration(minutes: 5);
+    Timer.periodic(duration, (Timer t) => showNotification());
     super.initState();
   }
 
+  void callbackDispatcher() {
+    Workmanager().executeTask((task, inputData) {
+      showNotification();
+      return Future.value(true);
+    });
+  }
+
+  var coine;
 // Function to show a notification
   Future<void> showNotification() async {
     // Select a single coin for simplicity, you can modify this part based on your app's logic
@@ -75,12 +91,11 @@ class _HomeState extends State<Home> {
     var platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: iOSPlatformChannelSpecifics);
-
     for (CoinModel coin in coinMarket!) {
       // Use the coin's image as the image path
       String imagePath = 'assets/images/${coin.image}.png';
       // Add the notification to the list
-
+      coine = coin;
       // Build the notification details with the coin image
       final BigPictureStyleInformation bigPictureStyleInformation =
           BigPictureStyleInformation(
@@ -105,8 +120,8 @@ class _HomeState extends State<Home> {
       // Show the notification
       await flutterLocalNotificationsPlugin.show(
         0,
-        'Crypto Data Updated',
-        'Details about the crypto data', // You can customize this message as needed
+        '${coine.id}',
+        '${coine.currentPrice}', // You can customize this message as needed
         platformChannelSpecifics,
         payload: 'item x',
       );
@@ -242,17 +257,21 @@ class _HomeState extends State<Home> {
                 height: myHeight * 0.06,
                 width: myWidth * 0.8,
                 child: TextField(
+                  textAlignVertical: TextAlignVertical(y: 0.9),
+                  textAlign: TextAlign.left,
                   controller: searchController,
                   onChanged: (value) {
                     filterCoins(value);
                   },
                   decoration: InputDecoration(
+                    isDense: true,
                     fillColor: Colors.grey[300],
                     filled: true,
                     hintText: 'Search',
                     prefixIcon: Icon(
                       Icons.search,
                       color: Color(0xff3B3B3B),
+                      size: 22,
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),

@@ -1,7 +1,9 @@
 import 'package:chart_sparkline/chart_sparkline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../../Admobservices/admobs.dart';
 import '../selectCoin.dart';
 
 class Item extends StatefulWidget {
@@ -17,10 +19,96 @@ class Item extends StatefulWidget {
 
 class _ItemState extends State<Item> {
   @override
+  void initState() {
+    // TODO: implement initState
+    _createintersestadd();
+
+    super.initState();
+  }
+
+  bool isLoading = false;
+  InterstitialAd? intersialad;
+
+  void _createintersestadd() {
+    InterstitialAd.load(
+      adUnitId: Admobservice.interestitialAndroid!,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          setState(() {
+            intersialad = ad;
+          });
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          setState(() {
+            intersialad = null;
+            isLoading = false;
+          });
+        },
+      ),
+    );
+  }
+
+  void showinterstedadd() {
+    if (intersialad != null) {
+      setState(() {
+        isLoading = true;
+      });
+
+      intersialad!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _createintersestadd();
+          setState(() {
+            isLoading = false;
+          });
+
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (contest) => SelectCoin(
+                        selectItem: widget.items,
+                      )));
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _createintersestadd();
+          setState(() {
+            isLoading = false;
+          });
+
+          // Navigate forward even when ad fails to show
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (contest) => SelectCoin(
+                        selectItem: widget.items,
+                      )));
+        },
+      );
+
+      intersialad!.show();
+    } else {
+      // Handle the case when intersialad is null
+      // This could happen if the ad fails to load
+      // Navigate forward in this case as well
+      setState(() {
+        isLoading = false;
+      });
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (contest) => SelectCoin(
+                    selectItem: widget.items,
+                  )));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
-
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: myWidth * 0.05,
@@ -28,12 +116,7 @@ class _ItemState extends State<Item> {
       ),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (contest) => SelectCoin(
-                        selectItem: widget.items,
-                      )));
+          showinterstedadd();
         },
         child: Container(
           child: Row(
